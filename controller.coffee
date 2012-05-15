@@ -131,7 +131,9 @@ class StateMachine extends Spine.Module
 		@currentState = @initialState
 		
 
-
+# 	TODO: 
+# 	1. Optionally support multiple active children.
+#	2. Add option to have STATE_ACTIVATED be default.
 
 class Controller extends Spine.Controller
 	
