@@ -145,11 +145,13 @@ class Controller extends Spine.Controller
 	# defaultChild		Controller
 	#
 	
-	constructor: (options) ->
+	constructor: (options={}) ->
 		@sm = new StateMachine
-
-		@sm.addState Controller.STATE_DEACTIVATED, true
-		@sm.addState Controller.STATE_ACTIVATED
+		
+		defaultState = options.defaultState
+		
+		@sm.addState Controller.STATE_DEACTIVATED, defaultState == Controller.STATE_ACTIVATED ? false : true
+		@sm.addState Controller.STATE_ACTIVATED, defaultState == Controller.STATE_ACTIVATED ? true : false
 		
 		@sm.bind "on_transition", @transition
 		@children = []
@@ -167,6 +169,7 @@ class Controller extends Spine.Controller
 		c.setParent(@)
 		if options.default
 			@setDefaultChild(c)	
+		
 		@children.push c
 	
 	removeChild: (c) ->
@@ -175,11 +178,18 @@ class Controller extends Spine.Controller
 	toState: (state)->
 		@sm.activate(state)
 	
+	beforeActivate: ->
+		
+	beforeDeactivate: ->
+	
 	activate: ->
 		ControllerHelper.activate(@)
 
 	deactivate: ->
 		ControllerHelper.deactivate(@)
+	
+	deactivateChildren: ->
+		@getActiveChild().deactivate() if @getActiveChild()
 	
 	reset: ->
 		@sm.reset()
@@ -208,9 +218,11 @@ class Controller extends Spine.Controller
 	# TODO: Make sure it's the correct SM
 	transition: (sm, from, to)=>
 		if to == Controller.STATE_ACTIVATED
+			@beforeActivate()
 			@trigger "activating", @
 			@doActivate()
 		else if to == Controller.STATE_DEACTIVATED
+			@beforeDeactivate()
 			@trigger "deactivating", @
 			@doDeactivate()
 	
@@ -248,7 +260,7 @@ class Controller extends Spine.Controller
 			if descendant
 				return descendant
 				
-	getActiveController: ->
+	getActiveChild: ->
 		for child in @children
 			return child if child.isActive()
 	
