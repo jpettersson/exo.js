@@ -14,7 +14,7 @@ class SessionHelper extends Spine.Module
 		@url ?= ''
 		@globalEvents = false
 	
-	@sessionExists: ->
+	@checkSession: ->
 		
 		ajaxProperties =
 			xhrFields:
