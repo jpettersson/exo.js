@@ -29,9 +29,7 @@ class SessionHelper extends Spine.Module
 
 		$.ajax($.extend({}, ajaxProperties, {url: @url}))	
 		
-	@ajaxSuccess: (data, status, xhr) ->
-		console.log data
-		
+	@ajaxSuccess: (data, status, xhr) ->	
 		if data.user and data.user.id
 			SessionHelper.trigger(SessionHelper.ON_SESSION, data.user.id)			
 		else

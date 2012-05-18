@@ -23,10 +23,8 @@ class List extends Exo.Controller
 	prepare: ->
 		
 	render:(collection) ->
-		console.log "Render"
-		console.log collection
 		@html @template(collection)								# Render HAML view. Requires the wrapping Array for some reason.
-		console.log @el											# TODO: Fix this so that the list works with other templating engines.
+		#console.log @el										# TODO: Fix this so that the list works with other templating engines.
 	
 	click: (e) ->
 		item = $(e.currentTarget).item()
