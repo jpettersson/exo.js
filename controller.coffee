@@ -227,7 +227,9 @@ class Controller extends Spine.Controller
 			@doDeactivate()
 	
 	isActive: ->
-		@sm.getCurrentState() == Controller.STATE_ACTIVATED && @sm.getNextState() == null
+		@sm.getCurrentState() == Controller.STATE_ACTIVATED
+		# Removing this for now, it's better to check both isActive and isTransitioning separately.
+		# && @sm.getNextState() == null
 	
 	isTransitioning: ->
 		@sm.getNextState() != null
