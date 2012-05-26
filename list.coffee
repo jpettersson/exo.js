@@ -23,9 +23,35 @@ class List extends Exo.Controller
 	prepare: ->
 		
 	render:(collection) ->
-		@html @template(collection)								# Render HAML view. Requires the wrapping Array for some reason.
-		#console.log @el										# TODO: Fix this so that the list works with other templating engines.
-	
+		if @template
+			# Render HAML view. Requires the wrapping Array for some reason.
+			# TODO: Fix this so that the list works with other templating engines.
+			@html @template(collection)								
+		else if @controller
+			# Dynamically create child controllers
+			for item in collection
+				child = @getOrCreateChild item
+
+			@deactivateAndKillOrphans(@getChildren(), collection)
+			@orderChildren(@getChildren(), collection)
+
+	getOrCreateChild: (item) ->
+		child = @getChildById(item.id)
+		unless child
+			child = new @controller
+			child.id = item.id
+			@addChild child
+			child.prepareWithModel item
+			@append child
+
+		return child
+
+	# Find children that have been deleted from the collection. Deactivate them, remove them from the DOM and make them available for GC.
+	deactivateAndKillOrphans: (children, collection) ->
+
+	# Reorder the children in the DOM according to the collection order.
+	orderChildren: (children, collection) ->
+
 	click: (e) ->
 		item = $(e.currentTarget).item()
 		@trigger('change', item, $(e.currentTarget))
