@@ -14,13 +14,8 @@ class List extends Exo.Controller
 		
 	###
 	
-	#constructor: (options={}) ->
-	#	@template = options.template
-	#	super
-	#		#multipleActiveChildren: true
-	#		defaultState: options.defaultState or Exo.Controller.STATE_ACTIVATED
-			
-	prepare: ->
+	constructor: (options={}) ->
+		super $.extend(options, {mode: Exo.Controller.MODE_MULTI, defaultState: Exo.Controller.STATE_ACTIVATED})
 		
 	render:(collection) ->
 		if @template
@@ -31,6 +26,7 @@ class List extends Exo.Controller
 			# Dynamically create child controllers
 			for item in collection
 				child = @getOrCreateChild item
+				child.activate()
 
 			@deactivateAndKillOrphans(@getChildren(), collection)
 			@orderChildren(@getChildren(), collection)
@@ -48,6 +44,13 @@ class List extends Exo.Controller
 
 	# Find children that have been deleted from the collection. Deactivate them, remove them from the DOM and make them available for GC.
 	deactivateAndKillOrphans: (children, collection) ->
+		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.id
+		for orphan in orphans
+			orphan.bind 'on_deactivated', =>
+				@removeChild orphan
+				orphan.release()
+				
+			orphan.deactivate()
 
 	# Reorder the children in the DOM according to the collection order.
 	orderChildren: (children, collection) ->
