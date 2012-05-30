@@ -6,12 +6,14 @@ class ControllerHelper
 		unless @lineageIsBusy(c)
 			if !c.isActive()
 				return ControllerHelper.activateController(c)
+		false
 	
 	@deactivate: (c) ->
 		unless @lineageIsBusy(c)
 			if c.isActive()
 				return ControllerHelper.deactivateController(c)
-	
+		false
+
 	@toggle: (c) ->
 		if c.isActive()
 			return @deactivate c
@@ -23,12 +25,15 @@ class ControllerHelper
 		
 		if parent
 			if parent.isActive()
-				siblings = parent.getChildren()
-				#console.log "Siblings: #{siblings}"
-				for sibling in siblings
-					if sibling.isActive()
-						sibling.setOnDeactivatedAction new ControllerAction(c, ControllerAction.TYPE_ACTIVATE)
-						return ControllerHelper.deactivateController(sibling)
+
+				# We only care about sibling states if the parent is in exlusive mode. Multi mode is usful in implementations like lists, where it's desired to mange the transitions of many concurrent children.
+				if parent.mode == "exclusive"
+					siblings = parent.getChildren()
+					#console.log "Siblings: #{siblings}"
+					for sibling in siblings
+						if sibling.isActive()
+							sibling.setOnDeactivatedAction new ControllerAction(c, ControllerAction.TYPE_ACTIVATE)
+							return ControllerHelper.deactivateController(sibling)
 			else
 				parent.setOnActivatedAction new ControllerAction(c, ControllerAction.TYPE_ACTIVATE)
 				return ControllerHelper.activateController parent
@@ -140,16 +145,21 @@ class Controller extends Spine.Controller
 	@STATE_ACTIVATED = "activated"
 	@STATE_DEACTIVATED = "deactivated"
 
+	@MODE_EXCLUSIVE = 'exclusive'
+	@MODE_MULTI = 'multi'
+
 	#
 	# Options:
 	# defaultChild		Controller
 	#
 	
 	constructor: (options={}) ->
+		@mode = options.mode ||= Controller.MODE_EXCLUSIVE
+
 		@sm = new StateMachine
 		
 		defaultState = options.defaultState
-		
+
 		@sm.addState Controller.STATE_DEACTIVATED, defaultState == Controller.STATE_ACTIVATED ? false : true
 		@sm.addState Controller.STATE_ACTIVATED, defaultState == Controller.STATE_ACTIVATED ? true : false
 		
@@ -235,10 +245,13 @@ class Controller extends Spine.Controller
 		@sm.getNextState() != null
 		
 	isBusy: ->
-		return true if @isTransitioning() or @onActivatedAction or @onDeactivatedAction
+		return true if @isTransitioning()
 		
-		for child in @children
-			return true if child.isBusy()
+		if @mode == 'exclusive'
+			return true if @onActivatedAction or @onDeactivatedAction
+
+			for child in @children
+				return true if child.isBusy()
 		
 		return false
 	
