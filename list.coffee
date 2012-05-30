@@ -28,6 +28,8 @@ class List extends Exo.Controller
 				child = @getOrCreateChild item
 				child.activate()
 
+			console.log "children before deactivate: #{@getChildren().length}" if @debug
+
 			@deactivateAndKillOrphans(@getChildren(), collection)
 			@orderChildren(@getChildren(), collection)
 
@@ -39,6 +41,10 @@ class List extends Exo.Controller
 			@addChild child
 			child.prepareWithModel item
 			@append child
+			console.log "child was created: #{child.id}" if @debug
+
+		else
+			console.log "child was found: #{child.id}" if @debug
 
 		return child
 
@@ -46,10 +52,13 @@ class List extends Exo.Controller
 	deactivateAndKillOrphans: (children, collection) ->
 		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.id
 		for orphan in orphans
-			orphan.bind 'on_deactivated', =>
-				@removeChild orphan
-				orphan.release()
-				
+			console.log "Deactivate: #{orphan.id}" if @debug
+			if orphan.isActive() and not orphan.isBusy()
+				orphan.bind 'onDeactivated', (controller) =>
+					console.log "Remove child: #{controller.id}" if @debug
+					@removeChild controller
+					controller.release()
+
 			orphan.deactivate()
 
 	# Reorder the children in the DOM according to the collection order.
