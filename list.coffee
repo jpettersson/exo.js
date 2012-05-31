@@ -31,14 +31,14 @@ class List extends Exo.Controller
 
 	renderTemplates: (collection) ->
 		templates = @templates || {default: @template} 
-		@html collection.map (item) => templates[item.className] or templates.default
+		@html collection.map (item) => templates[item.getClassName()] or templates.default
 			.call(@, [item])[0]
 
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
 		# Dynamically create child controllers
 		for item, i in collection
-			child = @getOrCreateChild item, controllers[item.className] or controllers.default
+			child = @getOrCreateChild item, controllers[item.getClassName()] or controllers.default
 			child.listIndex = i
 			child.activate()
 
@@ -47,11 +47,11 @@ class List extends Exo.Controller
 		@deactivateAndKillOrphans(@getChildren(), collection)
 		@orderChildren(@getChildren(), collection)
 
-	getOrCreateChild: (item) ->
-		child = @getChildById(item.id)
+	getOrCreateChild: (item, controller) ->
+		child = @getChildById(item.getClassName() + item.id)
 		unless child
-			child = new @controller
-			child.id = item.id
+			child = new controller
+			child.id = item.getClassName() + item.id
 			@addChild child
 			child.prepareWithModel item
 			@append child
