@@ -24,8 +24,9 @@ class List extends Exo.Controller
 			@html @template(collection)								
 		else if @controller
 			# Dynamically create child controllers
-			for item in collection
+			for item, i in collection
 				child = @getOrCreateChild item
+				child.listIndex = i
 				child.activate()
 
 			console.log "children before deactivate: #{@getChildren().length}" if @debug
