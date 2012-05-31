@@ -64,7 +64,7 @@ class List extends Exo.Controller
 
 	# Find children that have been deleted from the collection. Deactivate them, remove them from the DOM and make them available for GC.
 	deactivateAndKillOrphans: (children, collection) ->
-		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.id
+		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.getClassName() + item.id
 		for orphan in orphans
 			console.log "Deactivate: #{orphan.id}" if @debug
 			if orphan.isActive() and not orphan.isBusy()
