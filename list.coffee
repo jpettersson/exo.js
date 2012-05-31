@@ -66,7 +66,7 @@ class List extends Exo.Controller
 
 	click: (e) ->
 		item = $(e.currentTarget).item()
-		@trigger('change', item, $(e.currentTarget))
+		@trigger('select', item, $(e.currentTarget))
 		true
 
 module.exports = List
