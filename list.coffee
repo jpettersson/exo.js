@@ -16,23 +16,36 @@ class List extends Exo.Controller
 	
 	constructor: (options={}) ->
 		super $.extend(options, {mode: Exo.Controller.MODE_MULTI, defaultState: Exo.Controller.STATE_ACTIVATED})
-		
+	
+	templateFor: (templates, item) ->
+		templates[item.className]
+
+	controllerFor: (controllers, item) ->
+		controllers[item.className]
+
 	render:(collection) ->
-		if @template
-			# Render HAML view. Requires the wrapping Array for some reason.
-			# TODO: Fix this so that the list works with other templating engines.
-			@html @template(collection)								
-		else if @controller
-			# Dynamically create child controllers
-			for item, i in collection
-				child = @getOrCreateChild item
-				child.listIndex = i
-				child.activate()
+		if @template || @templates
+			@renderTemplates(collection) 
+		else if @controller || @controllers
+			@renderControllers collection
 
-			console.log "children before deactivate: #{@getChildren().length}" if @debug
+	renderTemplates: (collection) ->
+		templates = @templates || {default: @template} 
+		@html collection.map (item) => templates[item.className] or templates.default
+			.call(@, [item])[0]
 
-			@deactivateAndKillOrphans(@getChildren(), collection)
-			@orderChildren(@getChildren(), collection)
+	renderControllers: (collection) ->
+		controllers = @controllers || {default: @controller}
+		# Dynamically create child controllers
+		for item, i in collection
+			child = @getOrCreateChild item, controllers[item.className] or controllers.default
+			child.listIndex = i
+			child.activate()
+
+		console.log "children before deactivate: #{@getChildren().length}" if @debug
+
+		@deactivateAndKillOrphans(@getChildren(), collection)
+		@orderChildren(@getChildren(), collection)
 
 	getOrCreateChild: (item) ->
 		child = @getChildById(item.id)
