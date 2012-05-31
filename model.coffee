@@ -17,4 +17,7 @@ class Model extends Spine.Model
 				atts[attribute] = @defaultValues[attribute] if @defaultValues[attribute]
 		super
 	
+	getClassName: ->
+		@constructor.className
+
 module.exports = Model
