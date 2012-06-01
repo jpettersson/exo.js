@@ -37,15 +37,20 @@ class List extends Exo.Controller
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
 		# Dynamically create child controllers
+		
+		#Also, change the actual div order!
+		@deactivateAndKillOrphans(@getChildren(), collection)
+
 		for item, i in collection
 			child = @getOrCreateChild item, controllers[item.getClassName()] or controllers.default
+			
 			child.listIndex = i
+			child.moveTo i if child.moveTo
 			child.activate()
 
-		console.log "children before deactivate: #{@getChildren().length}" if @debug
+		@trigger 'afterRender', @
 
-		@deactivateAndKillOrphans(@getChildren(), collection)
-		@orderChildren(@getChildren(), collection)
+		console.log "children before deactivate: #{@getChildren().length}" if @debug
 
 	getOrCreateChild: (item, controller) ->
 		child = @getChildById(item.getClassName() + item.id)
@@ -74,9 +79,6 @@ class List extends Exo.Controller
 					controller.release()
 
 			orphan.deactivate()
-
-	# Reorder the children in the DOM according to the collection order.
-	orderChildren: (children, collection) ->
 
 	click: (e) ->
 		item = $(e.currentTarget).item()
