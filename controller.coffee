@@ -260,6 +260,9 @@ class Controller extends Spine.Controller
 	
 	getChildren: ->
 		@children
+
+	getActiveChildren: ->
+		@getChildren().filter (e) -> e.isActive()
 	
 	getChildById: (id) ->
 		for child in @children
