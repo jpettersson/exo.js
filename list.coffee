@@ -15,7 +15,9 @@ class List extends Exo.Controller
 	###
 	
 	constructor: (options={}) ->
-		super $.extend(options, {mode: Exo.Controller.MODE_MULTI, defaultState: Exo.Controller.STATE_ACTIVATED})
+		options.defaultState ||= Exo.Controller.STATE_ACTIVATED
+		options.mode ||= Exo.Controller.MODE_MULTI
+		super options
 	
 	templateFor: (templates, item) ->
 		templates[item.className]
