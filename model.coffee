@@ -13,9 +13,10 @@ class Model extends Spine.Model
 		
 		# Set default values
 		for attribute in @attributes
-			unless attribute in atts
-				atts[attribute] = @defaultValues[attribute] if @defaultValues[attribute]
-		super
+			unless atts[attribute]
+				atts[attribute.toString()] = @defaultValues[attribute.toString()] if @defaultValues[attribute.toString()] or @defaultValues[attribute.toString()] == 0
+
+		super atts, options
 	
 	getClassName: ->
 		@constructor.className
