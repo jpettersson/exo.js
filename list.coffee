@@ -26,6 +26,7 @@ class List extends Exo.Controller
 		controllers[item.className]
 
 	render:(collection) ->
+		@collection = collection
 		if @template || @templates
 			@renderTemplates(collection) 
 		else if @controller || @controllers
