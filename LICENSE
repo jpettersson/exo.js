@@ -1,14 +1,4 @@
-exo.js
-======
-
-Extensions for [Spine.js](http://spinejs.com/)
-
-I'm developing these extensions for a couple of Spine.js based projects I'm working on. <br />
-The idea is to eventually clean them up, slap on some docs and release them as a useful library.
-
-License
--------
-Copyright (c) 2012 Jonathan Pettersson (jonathan@spacetofu.com)
+Copyright (c) 2012 Jonathan Pettersson (jonathan.anders.pettersson@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
