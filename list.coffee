@@ -1,5 +1,5 @@
-Spine ?= require('spine')
-Exo ?= require('controller')
+Spine = require('spine')
+#Exo = require('controller')
 
 class List extends Exo.Controller
 	

@@ -1,6 +1,6 @@
 # Globals
 Exo = @Exo = {}
-module?.exports  = Exo
+module.exports  = Exo
 
 Exo.Model = require('lib/exo/model')
 

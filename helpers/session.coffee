@@ -1,5 +1,5 @@
-Spine ?= require('spine')
-Ajax ?= Spine.Ajax
+Spine = require('spine')
+Ajax = Spine.Ajax
 
 class SessionHelper extends Spine.Module
 	@extend Spine.Events
