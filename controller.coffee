@@ -37,7 +37,6 @@ class ControllerHelper
 			else
 				parent.setOnActivatedAction new ControllerAction(c, ControllerAction.TYPE_ACTIVATE)
 				return ControllerHelper.activateController parent
-		
 		return c.toState Controller.STATE_ACTIVATED
 	
 	@deactivateController: (c)->
@@ -166,9 +165,20 @@ class Controller extends Spine.Controller
 		@sm.bind "on_transition", @transition
 		@children = []
 		
+		if options.children
+			for child in options.children
+				@addChild child
+
+			delete options.children
+
 		@onActivatedAction = null
 		@onDeactivatedAction = null
 		
+		# Pass the id through to Spine to use as the element id attribute.
+		if options.id
+			options.attributes ||= {}
+			options.attributes.id = options.id
+
 		super options
 		
 		@prepare()
@@ -180,6 +190,11 @@ class Controller extends Spine.Controller
 		if options.default
 			@setDefaultChild(c)	
 		
+		c.bind 'onActivated', =>
+			@onChildActivated()
+		c.bind 'onDeactivated', =>
+			@onChildDeactivated()
+
 		@children.push c
 	
 	removeChild: (c) ->
@@ -225,6 +240,10 @@ class Controller extends Spine.Controller
 		@onDeactivatedAction = null
 		@trigger "onDeactivated", @
 	
+	onChildActivated: (child) ->
+
+	onChildDeactivated: (child) ->
+
 	# TODO: Make sure it's the correct SM
 	transition: (sm, from, to)=>
 		if to == Controller.STATE_ACTIVATED
