@@ -33,9 +33,8 @@ class List extends Exo.Controller
 			@renderControllers collection
 
 	renderTemplates: (collection) ->
-		templates = @templates || {default: @template} 
-		@html collection.map (item) => templates[item.getClassName()] or templates.default
-			.call(@, [item])[0]
+		templates = @templates || {default: @template}
+		@html collection.map (item) => (templates.default or templates[item.getClassName()]).call(@, [item])[0]
 
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
