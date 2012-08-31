@@ -83,7 +83,11 @@ class List extends Exo.Controller
 			orphan.deactivate()
 
 	click: (e) ->
-		item = $(e.currentTarget).item()
+		if $(e.currentTarget).item
+			item = $(e.currentTarget).item()
+		else
+			item = $(e.currentTarget).data('item')
+		
 		@trigger('select', item, $(e.currentTarget))
 		true
 
