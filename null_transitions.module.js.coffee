@@ -1,5 +1,3 @@
-Spine = require('spine')
-
 NullTransitions = 
 
 	doActivate: ->

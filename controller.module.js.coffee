@@ -1,5 +1,3 @@
-Spine = require('spine')
-
 class ControllerHelper
 	
 	@activate: (c) ->
@@ -324,5 +322,4 @@ class Controller extends Spine.Controller
 		#console.log "Controller.setParent #{parent}"
 		@parent = parent
 		
-
 module.exports = Controller

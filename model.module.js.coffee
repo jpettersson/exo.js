@@ -1,5 +1,3 @@
-Spine = require('spine')
-
 class Model extends Spine.Model
 	
 	@defaults: (atts) ->
