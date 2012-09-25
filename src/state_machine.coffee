@@ -5,20 +5,12 @@ class StateMachine
 
 	# opts.transitions		Object of transition & state names
 	# opts.initialState		The initial state
-	constructor: (opts={})->
-		@transitions = opts.transitions ||
-			activate:
-				from: 'deactivated'
-				to: 'activated'
-			deactivate: 
-				from: 'activated'
-				to: 'deactivated'
-
-		@currentState = @initialState = opts.initialState || 'deactivated'
+	constructor: (opts)->
+		@transitions = opts.transitions
+		@currentState = @initialState = opts.initialState
 
 		# create state transition methods dynamically	
 		for transition, states of @transitions
-			#console.log "Transition: #{transition} -> #{state}"
 			@[transition] = ()-> @attemptTransition transition
 
 	attemptTransition: (transition) ->
@@ -40,7 +32,6 @@ class StateMachine
 		if @currentTransition
 			@currentState = @currentTransition.to
 			@currentTransition = null
-			# trigger event 
-			#	"on_#{state}"
+			true
 
 module.exports = StateMachine

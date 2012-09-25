@@ -5,19 +5,23 @@ StateMachine = require 'state_machine'
 
 class NetworkedStateMachine extends StateMachine
 
+	parent: null
 	connections: []
 
 	# route an external event to an intrinsic transition
-	connect: (sm, event, transition) ->
+	connectChild: (child, event, transition) ->
 		# Does the transition exist locally?
 		if @transitions[transition]
 			# make sure we each connection is added only once.
 			@connections.push
-				sm: sm
+				sm: child
 				event: event
 				transition: transition
 
-	disconnect: (sm, event, transition) ->
+			# Give the child a reference to the single parent
+			sm.parent = @
+
+	disconnectChild: (sm, event, transition) ->
 		# If it exists, remove the external connection.
 
 	onExternalEvent: (sm, event) ->
@@ -25,4 +29,8 @@ class NetworkedStateMachine extends StateMachine
 		# Are we ready to perform the transition?
 		@attemptTransition transition
 
-module.exports = NetworkStateMachine
+	onTransitionComplete: ->
+		if super
+			# We successfully entered a new state, do any of our parents/children care?
+
+module.exports = NetworkedStateMachine
