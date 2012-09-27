@@ -211,9 +211,6 @@ class Node extends Spine.Module
 
 	onChildDeactivated: (child) ->
 
-	activatedChildren: () ->
-		@children.filter (node) -> node.isActivated()
-
 
 module.exports = Node
 
