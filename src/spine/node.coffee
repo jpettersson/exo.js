@@ -19,76 +19,74 @@ class Node extends Spine.Module
 		MULTI: 'multi'
 
 	@activate: (node) ->
-		unless @lineageIsBusy node
-			if !node.isActive()
-				parent = node.getParent()
-				
-				if parent
-					if parent.isActive()
-						# We only care about sibling states if the parent is in exlusive mode. 
-						# Multi mode is usful in implementations like lists, where it's desired 
-						# to mange the transitions of many concurrent children.
-						if parent.mode == Node.Modes.EXCLUSIVE
-							siblings = parent.getChildren()
-							for sibling in siblings
-								if sibling.isActive()
-									sibling.onDeactivatedAction = @createAction sibling, 'activate'
-									return ControllerHelper.deactivate(sibling)
-					
-					else
-						parent.setOnActivatedAction new ControllerAction(c, ControllerAction.TYPE_ACTIVATE)
-						return ControllerHelper.activate parent
+		return if @lineageIsBusy(node) or node.isActivated()
 
-				node.attemptTransition Node.Transitions.ACTIVATE
+		if node.parent
+			if node.parent.isActivated()
+				if parent.mode == Node.Modes.EXCLUSIVE
+					if sibling = parent.activatedChildren()[0]
+						sibling.onDeactivatedAction =
+							node: node
+							transition: Node.Transitions.ACTIVATE
+						return Node.deactivate sibling
+			else
+				parent.onActivatedAction = 
+					node: node
+					transition: Node.Transitions.ACTIVATE
+				return Node.activate parent
+
+		node.attemptTransition Node.Transitions.ACTIVATE
 
 	@deactivate: (node) ->
-		unless @lineageIsBusy(c)
-			if node.isActive()
-				children = c.getChildren()
-				for child in children
-					if child.isActive()
-						child.setOnDeactivatedAction new ControllerAction(c, ControllerAction.TYPE_DEACTIVATE)
-						return ControllerHelper.deactivate(child)
-				
-				node.attemptTransition Node.Transitions.DEACTIVATE
+		if node.isActive() and not @lineageIsBusy(node)
+			if node.mode == Node.Modes.EXCLUSIVE
+				if child = node.activatedChildren()[0]
+				child.onDeactivatedAction =
+					node: node
+					transition: Node.Transitions.DEACTIVATE
+				return ControllerHelper.deactivate(child)
+
+			else if node.mode == Node.Modes.MULTI
+				for child in node.activatedChildren()
+					ControllerHelper.deactivate(child)
+
+			node.attemptTransition Node.Transitions.DEACTIVATE
 
 	@toggle: (node) ->
-		if node.isActive()
+		if node.isActivated()
 			return @deactivate node
 		else
 			return @activate node
 
-	@lineageIsBusy: (node)->
-		parent = node.getParent()
-		
-		if parent
+	@lineageIsBusy: (node)->	
+		if parent = node.getParent()
 			return true if parent.isBusy()
 			while parent = parent.getParent()
 				return true if parent.isBusy()
-		
 
+	### FIX FIX FIX ###
 	@onNodeActivated: (node)->
-		action = node.getOnActivatedAction()
-		
-		if action
+		if action = node.onActivatedAction
 			if action.getType() == ControllerAction.TYPE_ACTIVATE
 				ControllerHelper.activateController(action.getController())
 	
+	### FIX FIX FIX ###
 	@onNodeDeactivated: (node)->
-		action = node.getOnDeactivatedAction()
-		
-		if action
+		if action = node.getOnDeactivatedAction()
 			if action.getType() == ControllerAction.TYPE_DEACTIVATE
 				ControllerHelper.deactivateController(action.getController())
 			else if action.getType() == ControllerAction.TYPE_ACTIVATE
 				ControllerHelper.activateController(action.getController())
 
-
 	# instance
 
+	id: null
 	parent: null
 	children: []
 
+	onAactivatedAction: null
+	onDeactivatedAction: null
+	
 	constructor: (opts={})->
 
 		@mode = options.mode ||= Node.Modes.EXCLUSIVE
@@ -135,13 +133,47 @@ class Node extends Spine.Module
 		@children.push node
 
 	removeChild: (node) ->
-		@children = @children.filter (a) -> node isnt a
+		@children = @children.filter (a) -> a isnt node
 	
+	activatedChildren: ->
+		@children().filter (n) -> n.isActivated()
+	
+	childById: (id) ->
+		@children.filter((n) -> n.id == id)[0]
+	
+	getDescendantById: (id) ->
+		child = @getChildById(id)
+		if child 
+			return child
+		
+		for child in @children
+			descendant = child.getDescendantById(id)
+			if descendant
+				return descendant
+
 	siblings: () ->
-		# @edges.filter((edge) -> edge.type == Node.Predecessor).map((edge)-> node) #flatten?
+		if @parent
+			return @parent.children.filter (n)-> n isnt @
+
+		return []
 
 	attemptTransition: (transition) ->
 		@sm().attemptTransition transition
+
+	isActivated: ->
+		@sm().currentState == Node.States.ACTIVATED
+	
+	isTransitioning: ->
+		@sm().nextState != null
+		
+	isBusy: ->
+		return true if @isTransitioning()
+		
+		if @mode == 'exclusive'
+			return true if @onActivatedAction or @onDeactivatedAction
+			return true if @children.filter((n) -> n.isBusy()).length > 0
+
+		return false
 
 
 	beforeActivate: ->
