@@ -1,45 +1,82 @@
 class StateMachine
+	
+	@E_DUPLICATE_STATE = "E_DUPLICATE_STATE: States must be distinct"
+	@E_DUPLICATE_TRANSITION = "E_DUPLICATE_TRANSITION: Transitions must be distinct"
+	@E_UNDEFINED_STATE = "E_UNDEFINED_STATE: All states used in transitions must be defined in the states array"
 
 	constructor: (opts={})->
+
 		states = opts.states || []
 		transitions = opts.transitions || []
 
-		currentState = initialState = opts.initialState || null
+		# Validate inputs
+		do validate = ->
+			unique = (a)->
+				output = {}
+				output[a[key]] = a[key] for key in [0...a.length]
+				value for key, value of output
 
-		# @attemptTransition: (transitionName) ->
-		# 	if @isReady() and @transitionIsPossible(transitionName)
-		# 		@currentTransition = @transitions[transitionName]
-		# 		@performTransition(transitionName)
-		# 		true
-		# 	else
-		# 		false
+			if states.length != unique(states).length
+				throw StateMachine.E_DUPLICATE_STATE
 
-		# @isReady: ->
-		# 	@currentTransition is null
+			tCheck = []
+			sCheck = []
+			for transition, tStates of transitions
+				tCheck.push "#{tStates.from}->#{tStates.to}"
+				sCheck.push tStates.to
+				sCheck.push tStates.from
 
-		# @transitionIsPossible: (transitionName) ->
-		# 	if transition = @transitions[transitionName]
-		# 		@currentState != transition.to && @currentState == transition.from
-		# 	else 
-		# 		false
+			console.log unique(sCheck).length
+			console.log states.length
+			if unique(sCheck).length > states.length
+				throw StateMachine.E_UNDEFINED_STATE
 
-		# @performTransition: (transitionName) ->
+			if tCheck.length != unique(tCheck).length
+				throw StateMachine.E_DUPLICATE_TRANSITION
 			
-		# # Time to complete the transition and free up the state machine
-		# @onTransitionComplete: ->
-		# 	if @currentTransition
-		# 		@currentState = @currentTransition.to
-		# 		@currentTransition = null
-		# 		true
-		# 	else 
-		# 		false
+		# Setup
 
-		@states: ->
+		currentState = initialState = opts.initialState || null
+		currentTransition = null
 
-		@transitions: ->
+		@attemptTransition = (transitionName) ->
+			if @isReady() and @transitionIsPossible(transitionName)
+				currentTransition = transitions[transitionName]
+				@performTransition(transitionName)
+				true
+			else
+				false
 
-		@currentState: ->
+		@isReady = ->
+			currentTransition is null
 
-		@initialState: ->
+		@transitionIsPossible = (transitionName) ->
+			if transition = transitions[transitionName]
+				currentState != transition.to && currentState == transition.from
+			else 
+				false
+
+		@performTransition = (transitionName) ->
+			
+		# Time to complete the transition and free up the state machine
+		@onTransitionComplete = ->
+			if currentTransition
+				currentState = currentTransition.to
+				currentTransition = null
+				true
+			else 
+				false
+
+		@states = ->		
+			states
+
+		@transitions = ->
+			transitions
+
+		@currentState = ->
+			currentState
+
+		@initialState = ->
+			initialState
 
 module.exports = StateMachine
