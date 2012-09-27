@@ -1,37 +1,45 @@
 class StateMachine
 
+	states: null
+	initialState: null
 	currentState: null
+
+	transitions: null
 	currentTransition: null
 
-	# opts.transitions		Object of transition & state names
-	# opts.initialState		The initial state
-	constructor: (opts)->
-		@transitions = opts.transitions
-		@currentState = @initialState = opts.initialState
+	constructor: (opts={})->
+		@states = opts.states || []
+		@transitions = opts.transitions || []
 
-		# create state transition methods dynamically	
-		for transition, states of @transitions
-			@[transition] = ()-> @attemptTransition transition
+		@currentState = @initialState = opts.initialState || null
 
-	attemptTransition: (transition) ->
-		if @isReady() and @transitionIsPossible(transition)
-			@currentTransition = transition
-			@performTransition(transition)
+	attemptTransition: (transitionName) ->
+		if @isReady() and @transitionIsPossible(transitionName)
+			@currentTransition = @transitions[transitionName]
+			@performTransition(transitionName)
+			true
+		else
+			false
 
 	isReady: ->
 		@currentTransition is null
 
-	transitionIsPossible: (transition) ->
-		# If we have no initial state or, if there's an arc between current state and the target state.
-		@currentState is null or transition.from == @currentState
+	transitionIsPossible: (transitionName) ->
+		if transition = @transitions[transitionName]
+			@currentState != transition.to && @currentState == transition.from
+		else 
+			false
 
-	performTransition: (transition) ->
-
+	performTransition: (transitionName) ->
+		
 	# Time to complete the transition and free up the state machine
 	onTransitionComplete: ->
 		if @currentTransition
 			@currentState = @currentTransition.to
 			@currentTransition = null
 			true
+		else 
+			false
+
 
 module.exports = StateMachine
