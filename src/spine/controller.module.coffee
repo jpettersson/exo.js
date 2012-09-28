@@ -35,7 +35,7 @@ class Controller extends Spine.Controller
 	]	
 
 	@NodePublicFuncs = [
-		'prepare'
+		#'prepare'
 		'beforeActivate'
 		'doActivate'
 		'beforeDeactivate'
@@ -45,8 +45,8 @@ class Controller extends Spine.Controller
 	]
 
 	constructor: (opts={}) ->
-		super
-		
+		super opts
+
 		# keep a private reference to a Node instance.
 		node = new Node
 		that = @
@@ -88,8 +88,11 @@ class Controller extends Spine.Controller
 					that[fn].apply(that, params)
 			a(func)
 
+		@prepare()
+
 	# Public
 	prepare: ->
+		console.log 'fu'
 
 	beforeActivate: ->
 	doActivate: -> @node().onActivated()

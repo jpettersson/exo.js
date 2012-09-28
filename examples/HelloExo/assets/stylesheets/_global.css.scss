@@ -1,0 +1,76 @@
+$greenish: #d0f9a9;
+
+html {
+	background-image: url(txture.png);
+	color: $greenish;
+	font-family: Tahoma;
+	margin: 0;
+	padding: 0;
+}
+
+button {
+	height: 30px;
+	border-radius: 8px;
+	border: none;
+	background-color: #000;
+	font-size: 20px;
+	color: $greenish;
+}
+
+.machine-item {
+	height: 512px;
+	width: 512px;
+	background-image: url('gear-icon.png');
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.machines {
+	.items {
+		text-align: center;
+		margin-bottom: 40px;
+	}
+}
+
+.superstars, .machines {
+	position: relative;
+	text-align: center;
+	
+	.item {
+		position: relative;
+		display: block;
+		margin-right: 20px;
+
+		button {
+			width: 30px;
+		}
+	}
+
+	h1 {
+		font-size: 62pt;
+		text-align: center;
+		font-style: italic;
+	}
+
+	h2 {
+		font-size: 32pt;
+	}
+
+	.input {
+		display: none;
+		
+		input {
+			margin: 0;
+			padding: 0;
+			width: 400px;
+			height: 50px;
+			background: none;
+			border: 1px solid $greenish;
+			border-radius: 8px;
+			color: $greenish;
+			font-size: 32px;
+			text-align: center;
+		}
+
+	}	
+}
