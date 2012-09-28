@@ -64,6 +64,7 @@ class Node
 			return true if parent.isBusy()
 			while parent = parent.parent()
 				return true if parent.isBusy()
+		false
 
 	@onNodeActivated: (node)->
 		node.parent().onChildActivated(node) if node.parent()
@@ -72,7 +73,7 @@ class Node
 
 	@onNodeDeactivated: (node)->
 		node.parent().onChildDeactivated(node) if node.parent()
-		if action = node.getOnDeactivatedAction()
+		if action = node.onDeactivatedAction
 			@processAction action
 
 	@processAction: (action) ->
@@ -86,6 +87,8 @@ class Node
 	constructor: (opts={})->
 		parent = null
 		children = opts.children || []
+
+		@mode = Node.Modes.EXCLUSIVE
 
 		id = opts.id
 		mode = opts.mode ||= Node.Modes.EXCLUSIVE
@@ -139,8 +142,11 @@ class Node
 		@removeChild = (node) ->
 			children = children.filter (a) -> a isnt node
 		
+		@children = ->
+			children
+
 		@activatedChildren = ->
-			children().filter (n) -> n.isActivated()
+			children.filter (n) -> n.isActivated()
 		
 		@childById = (id) ->
 			children.filter((n) -> n.id == id)[0]
@@ -162,13 +168,13 @@ class Node
 			return []
 
 		@isActivated = ->
-			@sm().currentState == Node.States.ACTIVATED
+			@sm().currentState() == Node.States.ACTIVATED
 		
 		@isTransitioning = ->
 			@sm().isTransitioning()
 			
 		@isBusy = ->
-			return true if isTransitioning()
+			return true if @isTransitioning()
 	
 			if mode == 'exclusive'
 				return true if onActivatedAction or onDeactivatedAction
@@ -186,12 +192,12 @@ class Node
 		#deactivateChildren: ->
 		
 		@onActivated = ->
-			sm().onTransitionComplete()
+			@sm().onTransitionComplete()
 			Node.onNodeActivated @
 			onActivatedAction = null
 
 		@onDeactivated = ->
-			sm().onTransitionComplete()
+			@sm().onTransitionComplete()
 			Node.onNodeDeactivated @
 			onDeactivatedAction = null
 
@@ -199,10 +205,10 @@ class Node
 	prepare: ->
 
 	beforeActivate: ->
-	doActivate: -> # Should be defined in the extending class
+	doActivate: -> @onActivated()
 
 	beforeDeactivate: ->
-	doDeactivate: -> # Should be defined in the extending class
+	doDeactivate: -> @onDeactivated()
 
 	onChildActivated: (child) ->
 
