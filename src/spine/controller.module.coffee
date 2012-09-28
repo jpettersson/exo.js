@@ -12,7 +12,7 @@ class Controller extends Spine.Controller
 		'processAction'
 	]
 
-	@NodeInstanceFuncs = [
+	@NodePrivilegedFuncs = [
 		# privileged
 		'sm'
 		'prepare'
@@ -32,7 +32,9 @@ class Controller extends Spine.Controller
 		'deactivate'
 		'onActivated'
 		'onDeactivated'
-		# public
+	]	
+
+	@NodePublicFuncs = [
 		'prepare'
 		'beforeActivate'
 		'doActivate'
@@ -40,7 +42,7 @@ class Controller extends Spine.Controller
 		'doDeactivate'
 		'onChildActivated'
 		'onChildDeactivated'
-	]	
+	]
 
 	constructor: (opts={}) ->
 		super
@@ -49,6 +51,9 @@ class Controller extends Spine.Controller
 		node = new Node
 		that = @
 		
+		@node = ()->
+			node
+
 		# Map the Node Class functions to our Class.
 		for func in Controller.NodeClassFuncs
 			a = (fn) ->
@@ -65,14 +70,36 @@ class Controller extends Spine.Controller
 					
 			a(func)
 
-		# Map the Node instance functions on our object to 
+		# Map the Node privileged functions on our object to 
 		# an encapsulated instance of Node.
-		for func in Controller.NodeInstanceFuncs
+		for func in Controller.NodePrivilegedFuncs
 			a = (fn) ->
 				# add function as a prop on the instance 'that'
-				that[func] = (params...) ->
+				that[fn] = (params...) ->	#WARNING: this was func before... and it worked :S
 					# call the instance function on node and return.
 					node[fn].apply(node, params)
 			a(func)
+
+		# We have to invert our reason when dealing with the public functions of node. 
+		# These we want to map to functions on 'that'
+		for func in Controller.NodePublicFuncs
+			a = (fn) ->
+				node[fn] = (params...) ->
+					that[fn].apply(that, params)
+			a(func)
+
+	# Public
+	prepare: ->
+
+	beforeActivate: ->
+	doActivate: -> @node().onActivated()
+
+	beforeDeactivate: ->
+	doDeactivate: -> @node().onDeactivated()
+
+	onChildActivated: (child) ->
+
+	onChildDeactivated: (child) ->
+
 
 module.exports = Controller
