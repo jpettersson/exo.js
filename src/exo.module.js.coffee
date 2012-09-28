@@ -1,10 +1,15 @@
 //= require './state_machine.module'
 //= require './node.module'
+//= require './spine/controller.module'
 
 # Globals
 Exo = @Exo = {}
 Exo.StateMachine = require './state_machine'
 Exo.Node = require './node'
+
+# Framwork specifics
+Exo.Spine = {}
+Exo.Spine.Controller = require './spine/controller'
 
 module.exports = Exo
 
