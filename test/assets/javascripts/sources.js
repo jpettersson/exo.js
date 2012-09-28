@@ -1,1 +1,1 @@
-//= require './src/state_machine.module'
+//= require './exo/exo.module'

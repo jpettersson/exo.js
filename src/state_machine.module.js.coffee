@@ -26,8 +26,6 @@ class StateMachine
 				sCheck.push tStates.to
 				sCheck.push tStates.from
 
-			console.log unique(sCheck).length
-			console.log states.length
 			if unique(sCheck).length > states.length
 				throw StateMachine.E_UNDEFINED_STATE
 
@@ -55,10 +53,7 @@ class StateMachine
 				currentState != transition.to && currentState == transition.from
 			else 
 				false
-
-		@performTransition = (transitionName) ->
 			
-		# Time to complete the transition and free up the state machine
 		@onTransitionComplete = ->
 			if currentTransition
 				currentState = currentTransition.to
@@ -78,5 +73,8 @@ class StateMachine
 
 		@initialState = ->
 			initialState
+
+	performTransition: (transitionName) ->
+
 
 module.exports = StateMachine

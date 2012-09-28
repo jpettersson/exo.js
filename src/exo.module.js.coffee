@@ -1,8 +1,10 @@
-console.log "haaai"
+//= require './state_machine.module'
+//= require './node.module'
+
 # Globals
 Exo = @Exo = {}
-Exo.StateMachine = require './exo/state_machine'
-#Exo.Node = require 'node'
+Exo.StateMachine = require './state_machine'
+Exo.Node = require './node'
 
 module.exports = Exo
 

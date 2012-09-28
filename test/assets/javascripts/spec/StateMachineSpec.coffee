@@ -1,9 +1,13 @@
 describe "StateMachine", ->
 
+	Exo = null
+	StateMachine = null
 	sm = null
 
 	beforeEach ->
-		StateMachine = require 'src/state_machine'
+		Exo = require 'exo/exo'
+		StateMachine = Exo.StateMachine
+
 		sm = new StateMachine
 			states: ['A', 'B']
 			initialState: 'A'
@@ -50,10 +54,6 @@ describe "StateMachine", ->
 			expect(sm.currentState()).toEqual 'A'
 
 	describe "when instantiating new instances", ->
-		StateMachine = null
-
-		beforeEach ->
-			StateMachine = require 'src/state_machine'
 
 		it 'should not allow duplicate states', ->
 			expect( ->
