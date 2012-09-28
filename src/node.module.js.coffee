@@ -3,9 +3,7 @@
 
 StateMachine = require './state_machine'
 
-class Node #extends Spine.Module
-
-	#@include Spine.Events
+class Node
 
 	@Transitions:
 		ACTIVATE: 'activate'
@@ -20,7 +18,7 @@ class Node #extends Spine.Module
 		MULTI: 'multi'
 
 	@activate: (node) ->
-		return if @lineageIsBusy(node) or node.isActivated()
+		return false if @lineageIsBusy(node) or node.isActivated()
 
 		if parent = node.parent()
 			if parent.isActivated()
@@ -53,6 +51,8 @@ class Node #extends Spine.Module
 
 			node.attemptTransition Node.Transitions.DEACTIVATE
 
+		false
+
 	@toggle: (node) ->
 		if node.isActivated()
 			return @deactivate node
@@ -66,10 +66,12 @@ class Node #extends Spine.Module
 				return true if parent.isBusy()
 
 	@onNodeActivated: (node)->
+		node.parent().onChildActivated(node) if node.parent()
 		if action = node.onActivatedAction
 			@processAction action
 
 	@onNodeDeactivated: (node)->
+		node.parent().onChildDeactivated(node) if node.parent()
 		if action = node.getOnDeactivatedAction()
 			@processAction action
 
@@ -121,6 +123,9 @@ class Node #extends Spine.Module
 		@setParent = (node)->
 			parent = node
 
+		@parent = ->
+			parent
+
 		@addChild = (node) ->
 			node.setParent(@)
 
@@ -157,10 +162,10 @@ class Node #extends Spine.Module
 			return []
 
 		@isActivated = ->
-			sm().currentState == Node.States.ACTIVATED
+			@sm().currentState == Node.States.ACTIVATED
 		
 		@isTransitioning = ->
-			sm().nextState != null
+			@sm().isTransitioning()
 			
 		@isBusy = ->
 			return true if isTransitioning()
@@ -184,13 +189,11 @@ class Node #extends Spine.Module
 			sm().onTransitionComplete()
 			Node.onNodeActivated @
 			onActivatedAction = null
-			#@trigger 'onActivated', @
 
 		@onDeactivated = ->
 			sm().onTransitionComplete()
 			Node.onNodeDeactivated @
 			onDeactivatedAction = null
-			#@trigger 'onDeactivated', @
 
 	# Public
 	prepare: ->

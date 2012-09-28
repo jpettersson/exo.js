@@ -38,15 +38,15 @@ class StateMachine
 		currentTransition = null
 
 		@attemptTransition = (transitionName) ->
-			if @isReady() and @transitionIsPossible(transitionName)
+			if not @isTransitioning() and @transitionIsPossible(transitionName)
 				currentTransition = transitions[transitionName]
 				@performTransition(transitionName)
 				true
 			else
 				false
 
-		@isReady = ->
-			currentTransition is null
+		@isTransitioning = ->
+			currentTransition != null
 
 		@transitionIsPossible = (transitionName) ->
 			if transition = transitions[transitionName]

@@ -42,13 +42,13 @@ describe "StateMachine", ->
 
 		it 'should successfully transition from A -> B -> A through to_B, to_A', ->
 			expect(sm.attemptTransition('to_B')).toEqual true
-			expect(sm.isReady()).toEqual false
+			expect(sm.isTransitioning()).toEqual true
 			
 			expect(sm.onTransitionComplete()).toEqual true
 			expect(sm.currentState()).toEqual 'B'
 
 			expect(sm.attemptTransition('to_A')).toEqual true
-			expect(sm.isReady()).toEqual false
+			expect(sm.isTransitioning()).toEqual true
 
 			expect(sm.onTransitionComplete()).toEqual true
 			expect(sm.currentState()).toEqual 'A'
