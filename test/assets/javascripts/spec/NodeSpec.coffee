@@ -47,6 +47,26 @@ describe "Node", ->
 			test.removeChild(test.children()[0])
 			expect(test.children().length).toEqual 4
 
+	describe 'as a child', ->
+		p = test = s = null
+
+		beforeEach ->
+			p = new Node
+			test = new Node
+			s = new Node
+
+			p.addChild test
+			p.addChild s
+
+		it "should be able to activate it's parent", ->
+			test.activate()
+			expect(test.isActivated() and p.isActivated()).toEqual true
+
+		it "should be able to activate by deactivating it's sibling", ->
+			s.activate()
+			test.activate()
+			expect(test.isActivated() and p.isActivated() and not s.isActivated()).toEqual true
+
 	describe "as a parent and child", ->
 		p = c = test = null
 

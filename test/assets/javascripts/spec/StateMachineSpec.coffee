@@ -8,50 +8,53 @@ describe "StateMachine", ->
 		Exo = require 'exo/exo'
 		StateMachine = Exo.StateMachine
 
-		sm = new StateMachine
-			states: ['A', 'B']
-			initialState: 'A'
-			
-			transitions:
-				to_B:
-					from: 'A'
-					to: 'B'
-				to_A:
-					from: 'B'
-					to: 'A'
-
 	it 'should instantiate', ->
-		expect(sm).not.toEqual null
+		expect(new StateMachine).not.toEqual null
 
-	it 'should have 2 states', ->
-		expect(sm.states().length == 2)
+	describe 'when configured with states A, B and transitions to_B(A => B), to_A(B => A)', ->
+		
+		beforeEach ->
+			sm = new StateMachine
+				states: ['A', 'B']
+				initialState: 'A'
+				
+				transitions:
+					to_B:
+						from: 'A'
+						to: 'B'
+					to_A:
+						from: 'B'
+						to: 'A'
 
-	it 'should have 2 transitions', ->
-		expect(sm.transitions().length == 2)
+		it 'should have 2 states', ->
+			expect(sm.states().length == 2)
 
-	it 'should initially be at state A', ->
-		expect(sm.currentState()).toEqual 'A'
+		it 'should have 2 transitions', ->
+			expect(sm.transitions().length == 2)
 
-	describe "when in initial state A", ->
-
-		it 'should allow transition from A -> B through to_B', ->
-			expect(sm.attemptTransition('to_B')).toEqual true
-
-		it 'should not allow transition from A -> A through to_A', ->
-			expect(sm.attemptTransition('to_A')).not.toEqual true
-
-		it 'should successfully transition from A -> B -> A through to_B, to_A', ->
-			expect(sm.attemptTransition('to_B')).toEqual true
-			expect(sm.isTransitioning()).toEqual true
-			
-			expect(sm.onTransitionComplete()).toEqual true
-			expect(sm.currentState()).toEqual 'B'
-
-			expect(sm.attemptTransition('to_A')).toEqual true
-			expect(sm.isTransitioning()).toEqual true
-
-			expect(sm.onTransitionComplete()).toEqual true
+		it 'should initially be at state A', ->
 			expect(sm.currentState()).toEqual 'A'
+
+		describe "when in initial state A", ->
+
+			it 'should allow transition from A -> B through to_B', ->
+				expect(sm.attemptTransition('to_B')).toEqual true
+
+			it 'should not allow transition from A -> A through to_A', ->
+				expect(sm.attemptTransition('to_A')).not.toEqual true
+
+			it 'should successfully transition from A -> B -> A through to_B, to_A', ->
+				expect(sm.attemptTransition('to_B')).toEqual true
+				expect(sm.isTransitioning()).toEqual true
+				
+				expect(sm.onTransitionComplete()).toEqual true
+				expect(sm.currentState()).toEqual 'B'
+
+				expect(sm.attemptTransition('to_A')).toEqual true
+				expect(sm.isTransitioning()).toEqual true
+
+				expect(sm.onTransitionComplete()).toEqual true
+				expect(sm.currentState()).toEqual 'A'
 
 	describe "when instantiating new instances", ->
 
