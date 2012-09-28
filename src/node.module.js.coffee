@@ -80,136 +80,129 @@ class Node #extends Spine.Module
 				@deactivate(action.node)
 
 	# # # instance
-
-	# id: null
-	# parent: null
-	# children: []
-
-	# onActivatedAction: null
-	# onDeactivatedAction: null
 	
 	constructor: (opts={})->
+		parent = null
+		children = opts.children || []
 
-		# @mode = opts.mode ||= Node.Modes.EXCLUSIVE
-		# @initialState = opts.initialState ||= Node.States.DEACTIVATED
+		id = opts.id
+		mode = opts.mode ||= Node.Modes.EXCLUSIVE
+		initialState = opts.initialState ||= Node.States.DEACTIVATED
 
-		# @sm().performTransition = (transition) =>
-		# 	if transition == Node.Transitions.ACTIVATE
-		# 		@beforeActivate()
-		# 		@trigger 'activating', @
-		# 		@doActivate()
-		# 	else if transition == Node.Transitions.DEACTIVATE
-		# 		@beforeDeactivate()
-		# 		@trigger 'deactivating', @
-		# 		@doDeactivate()
+		onActivatedAction = null
+		onDeactivatedAction = null
 
-		# super opts
+		smRef = null
+		# Create and return the state machine instance
+		@sm = ->
+			smRef ||= new StateMachine
+				states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
+				initialState: initialState
+				transitions:
+					activate:
+						from: Node.States.DEACTIVATED
+						to: Node.States.ACTIVATED
+					deactivate: 
+						from: Node.States.ACTIVATED
+						to: Node.States.DEACTIVATED
 
-		# @prepare()
+		@sm().performTransition = (t) =>
+			if t == Node.Transitions.ACTIVATE
+				@beforeActivate()
+				#@trigger 'activating', @
+				@doActivate()
+			else if t == Node.Transitions.DEACTIVATE
+				@beforeDeactivate()
+				#@trigger 'deactivating', @
+				@doDeactivate()
 
-	# # Create and return the state machine instance
-	# sm: ->
-	# 	@smRef ||= new StateMachine
-	# 		transitions:
-	# 			activate:
-	# 				from: Node.States.DEACTIVATED
-	# 				to: Node.States.ACTIVATED
-	# 			deactivate: 
-	# 				from: Node.States.ACTIVATED
-	# 				to: Node.States.DEACTIVATED
-
-	# 		initialState: @initialState
-
-	# prepare: ->
-
-
-	# addChild: (node) ->
-	# 	node.parent = @
-
-	# 	node.bind 'onActivated', =>
-	# 		@onChildActivated node
-	# 	node.bind 'onDeactivated', =>
-	# 		@onChildDeactivated node
-
-	# 	@children.push node
-
-	# removeChild: (node) ->
-	# 	@children = @children.filter (a) -> a isnt node
-	
-	# activatedChildren: ->
-	# 	@children().filter (n) -> n.isActivated()
-	
-	# childById: (id) ->
-	# 	@children.filter((n) -> n.id == id)[0]
-	
-	# getDescendantById: (id) ->
-	# 	child = @getChildById(id)
-	# 	if child 
-	# 		return child
+		@prepare()
 		
-	# 	for child in @children
-	# 		descendant = child.getDescendantById(id)
-	# 		if descendant
-	# 			return descendant
+		@setParent = (node)->
+			parent = node
 
-	# siblings: () ->
-	# 	if @parent
-	# 		return @parent.children.filter (n)-> n isnt @
+		@addChild = (node) ->
+			node.setParent(@)
 
-	# 	return []
+			# node.bind 'onActivated', =>
+			# 	@onChildActivated node
+			# node.bind 'onDeactivated', =>
+			# 	@onChildDeactivated node
 
-	# attemptTransition: (transition) ->
-	# 	@sm().attemptTransition transition
+			children.push node
 
-	# isActivated: ->
-	# 	@sm().currentState == Node.States.ACTIVATED
+		@removeChild = (node) ->
+			children = children.filter (a) -> a isnt node
+		
+		@activatedChildren = ->
+			children().filter (n) -> n.isActivated()
+		
+		@childById = (id) ->
+			children.filter((n) -> n.id == id)[0]
+
+		@descendantById = (id) ->
+			child = childById(id)
+			if child 
+				return child
+
+			for child in children
+				descendant = child.getDescendantById(id)
+				if descendant
+					return descendant
+
+		@siblings = () ->
+			if parent
+				return parent.children.filter (n)-> n isnt @
+
+			return []
+
+		@isActivated = ->
+			sm().currentState == Node.States.ACTIVATED
+		
+		@isTransitioning = ->
+			sm().nextState != null
+			
+		@isBusy = ->
+			return true if isTransitioning()
 	
-	# isTransitioning: ->
-	# 	@sm().nextState != null
+			if mode == 'exclusive'
+				return true if onActivatedAction or onDeactivatedAction
+				return true if children.filter((n) -> n.isBusy()).length > 0
+
+			return false
+
+		@attemptTransition = (t) ->
+			@sm().attemptTransition t
+
+		@activate = -> Node.activate @
+		@deactivate = -> Node.deactivate @
 		
-	# isBusy: ->
-	# 	return true if @isTransitioning()
+		# TODO
+		#deactivateChildren: ->
 		
-	# 	if @mode == 'exclusive'
-	# 		return true if @onActivatedAction or @onDeactivatedAction
-	# 		return true if @children.filter((n) -> n.isBusy()).length > 0
+		@onActivated = ->
+			sm().onTransitionComplete()
+			Node.onNodeActivated @
+			onActivatedAction = null
+			#@trigger 'onActivated', @
 
-	# 	return false
+		@onDeactivated = ->
+			sm().onTransitionComplete()
+			Node.onNodeDeactivated @
+			onDeactivatedAction = null
+			#@trigger 'onDeactivated', @
 
+	# Public
+	prepare: ->
 
-	# beforeActivate: ->
+	beforeActivate: ->
+	doActivate: -> # Should be defined in the extending class
 
-	# activate: ->
-	# 	Node.activate @
-		
-	# doActivate: ->
-	# 	# Should be defined in the extending class
+	beforeDeactivate: ->
+	doDeactivate: -> # Should be defined in the extending class
 
-	# onActivated: ->
-	# 	@sm().onTransitionComplete()
-	# 	@onNodeActivated @
-	# 	#@onActivatedAction = null
-	# 	@trigger 'onActivated', @
+	onChildActivated: (child) ->
 
-	# beforeDeactivate: ->
-
-	# deactivate: ->
-	# 	Node.deactivate @
-
-	# doDeactivate: ->
-	# 	# Should be defined in the extending class
-
-	# onDeactivated: ->
-	# 	@sm().onTransitionComplete()
-	# 	@onNodeDeactivated @
-	# 	#onDeactivatedAction = null
-	# 	@trigger 'onDeactivated', @
-
-	# deactivateChildren: ->
-	# 	@activeChild().deactivate() if @activeChild()
-
-	# onChildActivated: (child) ->
-
-	# onChildDeactivated: (child) ->
+	onChildDeactivated: (child) ->
 
 module.exports = Node
