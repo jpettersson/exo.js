@@ -1,6 +1,7 @@
 //= require './state_machine.module'
 //= require './node.module'
 //= require './spine/controller.module'
+//= require './spine/list.module'
 
 # Globals
 Exo = @Exo = {}
@@ -10,6 +11,7 @@ Exo.Node = require './node'
 # Framwork specifics
 Exo.Spine = {}
 Exo.Spine.Controller = require './spine/controller'
+Exo.Spine.List = require './spine/list'
 
 module.exports = Exo
 

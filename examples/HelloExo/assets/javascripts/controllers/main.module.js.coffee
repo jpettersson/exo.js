@@ -7,7 +7,9 @@ class Main extends Exo.Spine.Controller
 
 	constructor: ->
 		super
-			defaultState: Exo.Node.States.ACTIVATED
+			initialState: Exo.Node.States.ACTIVATED
+
+		console.log @mode()
 
 	activateNext: (next) ->
 		unless @next
@@ -18,7 +20,7 @@ class Main extends Exo.Spine.Controller
 			@next.bind "onActivated", @onControllerActivated		# and activated.
 
 			@append @next											# Also append it's @el to the DOM.
-	
+
 			console.log "Main: Activate next: #{next.className}"
 			@next.activate()										# Attempt to activate the section.
 			

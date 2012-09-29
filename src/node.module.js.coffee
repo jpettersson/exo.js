@@ -22,14 +22,14 @@ class Node
 
 		if parent = node.parent()
 			if parent.isActivated()
-				if parent.mode == Node.Modes.EXCLUSIVE
+				if parent.mode() == Node.Modes.EXCLUSIVE
 					if sibling = parent.activatedChildren()[0]
-						sibling.onDeactivatedAction =
+						sibling.setOnDeactivatedAction
 							node: node
 							transition: Node.Transitions.ACTIVATE
 						return Node.deactivate sibling
 			else
-				parent.onActivatedAction = 
+				parent.setOnActivatedAction
 					node: node
 					transition: Node.Transitions.ACTIVATE
 				return Node.activate parent
@@ -40,7 +40,7 @@ class Node
 		if node.isActivated() and not @lineageIsBusy(node)
 			if node.mode == Node.Modes.EXCLUSIVE
 				if child = node.activatedChildren()[0]
-					child.onDeactivatedAction =
+					child.setOnDeactivatedAction
 						node: node
 						transition: Node.Transitions.DEACTIVATE
 					return ControllerHelper.deactivate(child)
@@ -68,12 +68,12 @@ class Node
 
 	@onNodeActivated: (node)->
 		node.parent().onChildActivated(node) if node.parent()
-		if action = node.onActivatedAction
+		if action = node.onActivatedAction()
 			@processAction action
 
 	@onNodeDeactivated: (node)->
 		node.parent().onChildDeactivated(node) if node.parent()
-		if action = node.onDeactivatedAction
+		if action = node.onDeactivatedAction()
 			@processAction action
 
 	@processAction: (action) ->
@@ -87,8 +87,6 @@ class Node
 	constructor: (opts={})->
 		parent = null
 		children = opts.children || []
-
-		@mode = Node.Modes.EXCLUSIVE
 
 		id = opts.id
 		mode = opts.mode ||= Node.Modes.EXCLUSIVE
@@ -121,9 +119,25 @@ class Node
 				#@trigger 'deactivating', @
 				@doDeactivate()
 
-		@prepare()
-		
-		@setParent = (node)->
+		@setOnActivatedAction = (action) ->
+			onActivatedAction = action
+
+		@onActivatedAction = ->
+			onActivatedAction
+
+		@setOnDeactivatedAction = (action) ->
+			onDeactivatedAction = action
+
+		@onDeactivatedAction = ->
+			onDeactivatedAction
+
+		@setMode = (m) ->
+			mode = m
+
+		@mode = () ->
+			mode
+
+		@setParent = (node) ->
 			parent = node
 
 		@parent = ->
@@ -163,7 +177,7 @@ class Node
 
 		@siblings = () ->
 			if parent
-				return parent.children.filter (n)-> n isnt @
+				return parent.children().filter (n)-> n isnt @
 
 			return []
 
@@ -176,8 +190,9 @@ class Node
 		@isBusy = ->
 			return true if @isTransitioning()
 	
-			if mode == 'exclusive'
-				return true if onActivatedAction or onDeactivatedAction
+			if @mode() == Node.Modes.EXCLUSIVE
+				# Why was this in here? It didn't work.. check old implementation!
+				# return true if @onActivatedAction() != null or @onDeactivatedAction() != null
 				return true if children.filter((n) -> n.isBusy()).length > 0
 
 			return false
@@ -194,15 +209,12 @@ class Node
 		@onActivated = ->
 			@sm().onTransitionComplete()
 			Node.onNodeActivated @
-			onActivatedAction = null
+			@setOnActivatedAction null
 
 		@onDeactivated = ->
 			@sm().onTransitionComplete()
 			Node.onNodeDeactivated @
-			onDeactivatedAction = null
-
-	# Public
-	prepare: ->
+			@setOnDeactivatedAction null
 
 	beforeActivate: ->
 	doActivate: -> @onActivated()

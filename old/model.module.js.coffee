@@ -16,7 +16,7 @@ class Model extends Spine.Model
 
 		super atts, options
 	
-	getClassName: ->
-		@constructor.className
+	#className: ->
+	#	@constructor.className
 
 module.exports = Model

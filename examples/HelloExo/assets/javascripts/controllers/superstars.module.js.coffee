@@ -21,7 +21,6 @@ class Superstars extends Exo.Spine.Controller
 		'click .item button': 'deleteStar'
 
 	prepare: ->
-		console.log 'prepare!!'
 		# first, draw the DOM objects we need.
 		@render()
 		@el.hide()
@@ -32,7 +31,7 @@ class Superstars extends Exo.Spine.Controller
 		# assigned an element by passing in the 'el' parameter.
 		# We are also specifying a controller class to handle each item in 
 		# the collection.
-		@list = new Exo.List
+		@list = new Exo.Spine.List
 			el: @itemsEl
 			controller: StarController
 

@@ -2,6 +2,10 @@ Node = require '../node'
 
 class Controller extends Spine.Controller
 
+	@Events:
+		ON_ACTIVATED: 'onActivated'
+		ON_DEACTIVATED: 'onDeactivated'
+
 	@NodeClassFuncs = [
 		'activate'
 		'deactivate'
@@ -15,8 +19,8 @@ class Controller extends Spine.Controller
 	@NodePrivilegedFuncs = [
 		# privileged
 		'sm'
-		'prepare'
 		'setParent'
+		'parent'
 		'addChild'
 		'removeChild'
 		'children'
@@ -30,12 +34,19 @@ class Controller extends Spine.Controller
 		'attemptTransition'
 		'activate'
 		'deactivate'
-		'onActivated'
-		'onDeactivated'
+		'setMode'
+		'mode'
+		'setOnActivatedAction'
+		'onActivatedAction'
+		'setOnDeactivatedAction'
+		'onDeactivatedAction'
+		# These are special, since we want to override them override them on 
+		# this object, explain this better.
+		#'onActivated'
+		#'onDeactivated'
 	]	
 
 	@NodePublicFuncs = [
-		#'prepare'
 		'beforeActivate'
 		'doActivate'
 		'beforeDeactivate'
@@ -45,10 +56,8 @@ class Controller extends Spine.Controller
 	]
 
 	constructor: (opts={}) ->
-		super opts
-
 		# keep a private reference to a Node instance.
-		node = new Node
+		node = new Node opts
 		that = @
 		
 		@node = ()->
@@ -88,20 +97,28 @@ class Controller extends Spine.Controller
 					that[fn].apply(that, params)
 			a(func)
 
+		delete opts.initialState if opts.initialState
+		delete opts.mode if opts.mode
+
+		super opts
 		@prepare()
 
 	# Public
 	prepare: ->
-		console.log 'fu'
 
 	beforeActivate: ->
-	doActivate: -> @node().onActivated()
+	doActivate: -> 
+	onActivated: -> 
+		@node().onActivated()
+		@trigger Controller.Events.ON_ACTIVATED, @
 
 	beforeDeactivate: ->
-	doDeactivate: -> @node().onDeactivated()
+	doDeactivate: -> 
+	onDeactivated: -> 
+		@node().onDeactivated()
+		@trigger Controller.Events.ON_DEACTIVATED, @
 
 	onChildActivated: (child) ->
-
 	onChildDeactivated: (child) ->
 
 
