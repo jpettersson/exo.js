@@ -1,10 +1,32 @@
 exo.js
 ======
 
+Overview
+--------
+
 Extensions for [Spine.js](http://spinejs.com/)
 
 I'm developing these extensions for a couple of Spine.js based projects I'm working on. <br />
 The idea is to eventually clean them up, slap on some docs and release them as a useful library.
+
+Exo.StateMachine
+----------------
+A small implementation of a finite state machine.
+
+Exo.Node
+--------
+
+
+Exo.Spine.Controller
+--------------------
+This class extends the Spine.Controller and infuses it will all the functionality of the Exo.Node
+
+Tests
+-----
+
+* Using Jasmine
+* Specs written in Coffeescript
+* Run with catapult
 
 License
 -------

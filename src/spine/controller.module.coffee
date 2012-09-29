@@ -21,7 +21,7 @@ class Controller extends Spine.Controller
 		'sm'
 		'setParent'
 		'parent'
-		'addChild'
+		#'addChild'
 		'removeChild'
 		'children'
 		'activatedChildren'
@@ -70,7 +70,7 @@ class Controller extends Spine.Controller
 				Controller[fn] = (params...) -> 
 					if params
 						# if the param is 'that', convert it to the Node instance reference.
-						modParams = params.map (p) -> if p is that then node else p
+						modParams = params.map (p) -> if p is node then that else p
 						# call the Class function on Node with our modified params and return.
 						Node[fn].apply(Node, modParams)
 					else
@@ -96,6 +96,17 @@ class Controller extends Spine.Controller
 				node[fn] = (params...) ->
 					that[fn].apply(that, params)
 			a(func)
+
+		# Hack hack.. make sure we always add the Controller instance and not the Node.
+		@addChild = (node) ->
+			node.setParent(@)
+
+			# node.bind 'onActivated', =>
+			# 	@onChildActivated node
+			# node.bind 'onDeactivated', =>
+			# 	@onChildDeactivated node
+
+			@children().push node
 
 		delete opts.initialState if opts.initialState
 		delete opts.mode if opts.mode
