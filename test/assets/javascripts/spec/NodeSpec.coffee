@@ -111,7 +111,7 @@ describe "Node", ->
 
 		describe "when configured as mode = Mode.MULTI", ->
 			it 'should allow multiple activated children', ->
-				test.mode = Node.Modes.MULTI
+				test.setMode Node.Modes.MULTI
 				
 				c1 = new Node
 				c2 = new Node
