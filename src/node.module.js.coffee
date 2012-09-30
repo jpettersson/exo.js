@@ -38,16 +38,16 @@ class Node
 
 	@deactivate: (node) ->
 		if node.isActivated() and not @lineageIsBusy(node)
-			if node.mode == Node.Modes.EXCLUSIVE
+			if node.mode() == Node.Modes.EXCLUSIVE
 				if child = node.activatedChildren()[0]
 					child.setOnDeactivatedAction
 						node: node
 						transition: Node.Transitions.DEACTIVATE
-					return ControllerHelper.deactivate(child)
+					return Node.deactivate(child)
 
 			else if node.mode == Node.Modes.MULTI
 				for child in node.activatedChildren()
-					ControllerHelper.deactivate(child)
+					Node.deactivate(child)
 
 			node.attemptTransition Node.Transitions.DEACTIVATE
 
