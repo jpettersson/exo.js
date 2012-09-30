@@ -2,33 +2,46 @@ class VisualNode extends Exo.Spine.Controller
 
 	className: 'visualNode'
 
-	HEIGHT: 100
-	WIDTH: 100
-
 	events:
 		'click': 'toggle'
+
+	elements: 
+		'.items': 'itemsEl'
+
+	constructor: ->
+		super
+
+	doActivate: ->
+		TweenLite.to(@el, .3, {
+			css: {
+				rotation: 90
+				backgroundColor: '#42a4ff'
+			},
+			#ease: Elastic.easeOut,
+			onComplete: => @onActivated()
+		})
+
+	doDeactivate: ->
+		TweenLite.to(@el, .3, {
+			css: {
+				rotation: 0
+				backgroundColor: '#90a1b1'
+			},
+			#ease: Elastic.easeOut,
+			onComplete: => @onDeactivated()
+		})
 
 	toggle: ->
 		console.log 'click'
 		Exo.Spine.Controller.toggle @
 
-	doActivate: ->
-		@el.addClass 'activated'
-		@onActivated()
-
-	doDeactivate: ->
-		@el.removeClass 'activated'
-		@onDeactivated()
-
-	position: ()->
-		console.log @parent()
-		if @parent()
-			console.log "JA"
-			console.log @parent().el
-			@el.css('top', @parent().el.css('top') + @HEIGHT)
-			@el.css('left', '50%')
-		else
-			@el.css('top', '10px')
-			@el.css('left', '50%')
+	# position: ()->
+	# 	console.log @parent()
+	# 	if @parent()
+	# 		y = @parent().el.position().top + @HEIGHT
+	# 		@el.css('top', y + 'px')
+	# 		@el.css('left', '200px')
+	# 	else
+	# 		@el.css('left', '50%')
 
 module.exports = VisualNode
