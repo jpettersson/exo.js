@@ -107,6 +107,7 @@ class Controller extends Spine.Controller
 			# 	@onChildDeactivated node
 
 			@children().push node
+			@onChildAdded node
 
 		delete opts.initialState if opts.initialState
 		delete opts.mode if opts.mode
@@ -129,6 +130,7 @@ class Controller extends Spine.Controller
 		@node().onDeactivated()
 		@trigger Controller.Events.ON_DEACTIVATED, @
 
+	onChildAdded: (child) ->
 	onChildActivated: (child) ->
 	onChildDeactivated: (child) ->
 
