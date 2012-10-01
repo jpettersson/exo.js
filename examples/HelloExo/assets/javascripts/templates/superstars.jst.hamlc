@@ -1,0 +1,8 @@
+%h1 Hello Exo!	
+.items
+.input
+	%input{type: 'text', autofocus: 'autofocus'}
+	%br
+	%br
+	%button.machines
+		Want machines?
