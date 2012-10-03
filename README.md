@@ -1,32 +1,45 @@
 exo.js
 ======
 
-Overview
---------
+Exo is a small JS library that brings a bunch of abstractions and workflows to make it fun and easy to build heavily animated realtime JS apps. The library is a perfect exoskeleton for projects using [Spine.js](http://spinejs.com/) or [Backbone.js](http://backbonejs.org/).
 
-Extensions for [Spine.js](http://spinejs.com/)
+*The library and the docs are currently under heavy development.*
 
-I'm developing these extensions for a couple of Spine.js based projects I'm working on. <br />
-The idea is to eventually clean them up, slap on some docs and release them as a useful library.
+CoffeeScript <3
+------------
+The library, test specs and the examples are all written in [CoffeeScript](http://coffeescript.org/).
 
 Exo.StateMachine
 ----------------
-A small implementation of a finite state machine.
+The core of the Exo lib is a FSM (Finite State Machine) implementation. This class is not commonly used directly, but when it is it can be configured in all the ways you'd expect an FSM to allow.
 
 Exo.Node
 --------
+The Exo Node is the real workhorse of the Exo lib. The Node is very oppionated and assumes that all your UI components can be broken down into hierarchies of little machines with the following properties: 
 
+A node has an internal FSM with two states and two transitions: 
+
+	[Deactivated] activate -> [Activated]
+	[Activated] deactivate -> [Deactivated]
+
+Nodes can be connected to each other as parent -> children, effectively creating a directed graph of state machines (and state control). Take a look at the VisualNode example to experience why it's useful. 
+
+This model has proven to be extremely robust and powerful: enabling rapid prototyping and clean code.
 
 Exo.Spine.Controller
 --------------------
-This class extends the Spine.Controller and infuses it will all the functionality of the Exo.Node
+This class extends the Spine.Controller and infuses it will all the functionality of the Exo.Node. Instances of Exo.Node and Exo.Spine.Controllers are completely compatible.
+
+Examples
+--------
+Two examples have been provided to showcase the core features of Exo while using it together with Spine.js. To run the examples you need to init & update the git submodules in order to get the correct Spine.js source.
+
+``git submodule init``	
+``git submodule update``
 
 Tests
 -----
-
-* Using Jasmine
-* Specs written in Coffeescript
-* Run with catapult
+Using Jasmine.
 
 License
 -------
