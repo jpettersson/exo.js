@@ -34,6 +34,7 @@ class Controller extends Spine.Controller
 		'attemptTransition'
 		'activate'
 		'deactivate'
+		'toggle'
 		'setMode'
 		'mode'
 		'setOnActivatedAction'

@@ -202,6 +202,7 @@ class Node
 
 		@activate = -> Node.activate @
 		@deactivate = -> Node.deactivate @
+		@toggle = -> Node.toggle @
 		
 		# TODO
 		#deactivateChildren: ->
