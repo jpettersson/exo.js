@@ -1,7 +1,7 @@
 exo.js
 ======
 
-Exo is a small JS library that brings a bunch of abstractions and workflows to make it fun and easy to build heavily animated realtime JS apps. The library is a perfect exoskeleton for projects using [Spine.js](http://spinejs.com/) or [Backbone.js](http://backbonejs.org/).
+Exo is a small JS library that brings a bunch of classes and workflows to make it fun and easy to build heavily animated realtime JS apps. The library is a perfect exoskeleton for projects using [Spine.js](http://spinejs.com/) or [Backbone.js](http://backbonejs.org/).
 
 *The library and the docs are currently under heavy development.*
 
