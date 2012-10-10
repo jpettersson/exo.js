@@ -1,5 +1,5 @@
-class StateMachine
-	
+class Exo.StateMachine
+
 	@E_DUPLICATE_STATE = "E_DUPLICATE_STATE: States must be distinct"
 	@E_DUPLICATE_TRANSITION = "E_DUPLICATE_TRANSITION: Transitions must be distinct"
 	@E_UNDEFINED_STATE = "E_UNDEFINED_STATE: All states used in transitions must be defined in the states array"
@@ -31,7 +31,7 @@ class StateMachine
 
 			if tCheck.length != unique(tCheck).length
 				throw StateMachine.E_DUPLICATE_TRANSITION
-			
+
 		# Setup
 
 		currentState = initialState = opts.initialState || null
@@ -51,18 +51,18 @@ class StateMachine
 		@transitionIsPossible = (transitionName) ->
 			if transition = transitions[transitionName]
 				currentState != transition.to && currentState == transition.from
-			else 
+			else
 				false
-			
+
 		@onTransitionComplete = ->
 			if currentTransition
 				currentState = currentTransition.to
 				currentTransition = null
 				true
-			else 
+			else
 				false
 
-		@states = ->		
+		@states = ->
 			states
 
 		@transitions = ->
@@ -77,4 +77,3 @@ class StateMachine
 	performTransition: (transitionName) ->
 
 
-module.exports = StateMachine

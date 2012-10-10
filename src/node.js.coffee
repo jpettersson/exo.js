@@ -1,9 +1,9 @@
 # Exo.Node can be used to build an arbitrarily large directed graph
 # of ui components that will be controlled hierarchical from the top down.
 
-StateMachine = require './state_machine'
+StateMachine = Exo.StateMachine
 
-class Node
+class Exo.Node
 
 	@Transitions:
 		ACTIVATE: 'activate'
@@ -83,7 +83,7 @@ class Node
 				@deactivate(action.node)
 
 	# # # instance
-	
+
 	constructor: (opts={})->
 		parent = null
 		children = opts.children || []
@@ -105,7 +105,7 @@ class Node
 					activate:
 						from: Node.States.DEACTIVATED
 						to: Node.States.ACTIVATED
-					deactivate: 
+					deactivate:
 						from: Node.States.ACTIVATED
 						to: Node.States.DEACTIVATED
 
@@ -155,19 +155,19 @@ class Node
 
 		@removeChild = (node) ->
 			children = children.filter (a) -> a isnt node
-		
+
 		@children = ->
 			children
 
 		@activatedChildren = ->
 			children.filter (n) -> n.isActivated()
-		
+
 		@childById = (id) ->
 			children.filter((n) -> n.id == id)[0]
 
 		@descendantById = (id) ->
 			child = childById(id)
-			if child 
+			if child
 				return child
 
 			for child in children
@@ -183,13 +183,13 @@ class Node
 
 		@isActivated = ->
 			@sm().currentState() == Node.States.ACTIVATED
-		
+
 		@isTransitioning = ->
 			@sm().isTransitioning()
-			
+
 		@isBusy = ->
 			return true if @isTransitioning()
-	
+
 			if @mode() == Node.Modes.EXCLUSIVE
 				# Why was this in here? It didn't work.. check old implementation!
 				# return true if @onActivatedAction() != null or @onDeactivatedAction() != null
@@ -203,10 +203,10 @@ class Node
 		@activate = -> Node.activate @
 		@deactivate = -> Node.deactivate @
 		@toggle = -> Node.toggle @
-		
+
 		# TODO
 		#deactivateChildren: ->
-		
+
 		@onActivated = ->
 			@sm().onTransitionComplete()
 			Node.onNodeActivated @
@@ -227,4 +227,4 @@ class Node
 
 	onChildDeactivated: (child) ->
 
-module.exports = Node
+

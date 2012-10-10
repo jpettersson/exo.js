@@ -1,18 +1,18 @@
-class List extends Exo.Spine.Controller
-	
+class Exo.Spine.List extends Exo.Spine.Controller
+
 	###
-		
-		TODO: 
+
+		TODO:
 		* Add option to auto select any item on render.
 		* Allow the items to be Exo.Controller instances
 			* Allow each item to have it's own in/out transitions.
 			* Allow the entire list to have a single in/out transition.
 		* Allow the items to be simple rendered views.
-		
+
 	###
 
 	#debug: true
-	
+
 	constructor: (opts={}) ->
 		opts.initialState = Exo.Node.States.ACTIVATED
 		opts.mode = Exo.Node.Modes.MULTI
@@ -27,7 +27,7 @@ class List extends Exo.Spine.Controller
 	render:(collection) ->
 		@collection = collection
 		if @template || @templates
-			@renderTemplates(collection) 
+			@renderTemplates(collection)
 		else if @controller || @controllers
 			@renderControllers collection
 
@@ -38,7 +38,7 @@ class List extends Exo.Spine.Controller
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
 		# Dynamically create child controllers
-		
+
 		#Also, change the actual div order!
 		@deactivateAndKillOrphans(@children(), collection)
 
@@ -86,8 +86,7 @@ class List extends Exo.Spine.Controller
 			item = $(e.currentTarget).item()
 		else
 			item = $(e.currentTarget).data('item')
-		
+
 		@trigger('select', item, $(e.currentTarget))
 		true
 
-module.exports = List

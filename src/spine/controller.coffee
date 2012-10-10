@@ -1,6 +1,6 @@
-Node = require '../node'
+Node = Exo.Node
 
-class Controller extends Spine.Controller
+class Exo.Spine.Controller extends Spine.Controller
 
 	@Events:
 		ON_ACTIVATED: 'onActivated'
@@ -41,11 +41,11 @@ class Controller extends Spine.Controller
 		'onActivatedAction'
 		'setOnDeactivatedAction'
 		'onDeactivatedAction'
-		# These are special, since we want to override them override them on 
+		# These are special, since we want to override them override them on
 		# this object, explain this better.
 		#'onActivated'
 		#'onDeactivated'
-	]	
+	]
 
 	@NodePublicFuncs = [
 		'beforeActivate'
@@ -60,7 +60,7 @@ class Controller extends Spine.Controller
 		# keep a private reference to a Node instance.
 		node = new Node opts
 		that = @
-		
+
 		@node = ()->
 			node
 
@@ -68,7 +68,7 @@ class Controller extends Spine.Controller
 		for func in Controller.NodeClassFuncs
 			a = (fn) ->
 				# add function as a prop on Controller
-				Controller[fn] = (params...) -> 
+				Controller[fn] = (params...) ->
 					if params
 						# if the param is 'that', convert it to the Node instance reference.
 						modParams = params.map (p) -> if p is node then that else p
@@ -77,10 +77,10 @@ class Controller extends Spine.Controller
 					else
 						# call the class function on Node without any params.
 						Node[fn]()
-					
+
 			a(func)
 
-		# Map the Node privileged functions on our object to 
+		# Map the Node privileged functions on our object to
 		# an encapsulated instance of Node.
 		for func in Controller.NodePrivilegedFuncs
 			a = (fn) ->
@@ -90,7 +90,7 @@ class Controller extends Spine.Controller
 					node[fn].apply(node, params)
 			a(func)
 
-		# We have to invert our reason when dealing with the public functions of node. 
+		# We have to invert our reason when dealing with the public functions of node.
 		# These we want to map to functions on 'that'
 		for func in Controller.NodePublicFuncs
 			a = (fn) ->
@@ -120,14 +120,14 @@ class Controller extends Spine.Controller
 	prepare: ->
 
 	beforeActivate: ->
-	doActivate: -> 
-	onActivated: -> 
+	doActivate: ->
+	onActivated: ->
 		@node().onActivated()
 		@trigger Controller.Events.ON_ACTIVATED, @
 
 	beforeDeactivate: ->
-	doDeactivate: -> 
-	onDeactivated: -> 
+	doDeactivate: ->
+	onDeactivated: ->
 		@node().onDeactivated()
 		@trigger Controller.Events.ON_DEACTIVATED, @
 
@@ -136,4 +136,3 @@ class Controller extends Spine.Controller
 	onChildDeactivated: (child) ->
 
 
-module.exports = Controller
