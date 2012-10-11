@@ -86,7 +86,12 @@ class Node
 	
 	constructor: (opts={})->
 		parent = null
-		children = opts.children || []
+		children = []
+
+		if opts.children
+			for node in opts.children
+				node.setParent @
+			children = opts.children
 
 		id = opts.id
 		mode = opts.mode ||= Node.Modes.EXCLUSIVE
