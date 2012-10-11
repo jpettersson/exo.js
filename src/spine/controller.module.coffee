@@ -112,6 +112,7 @@ class Controller extends Spine.Controller
 
 		delete opts.initialState if opts.initialState
 		delete opts.mode if opts.mode
+		delete opts.children if opts.children
 
 		super opts
 		@prepare()
