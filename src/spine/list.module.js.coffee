@@ -33,7 +33,7 @@ class List extends Exo.Spine.Controller
 
 	renderTemplates: (collection) ->
 		templates = @templates || {default: @template}
-		@html collection.map (item) => (templates.default or templates[item.constructor.className]).call(@, [item])[0]
+		@html collection.map (item) => (templates.default or templates[item.constructor.className]).call(@, item)
 
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
