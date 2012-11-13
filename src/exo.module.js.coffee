@@ -2,6 +2,7 @@
 //= require './node.module'
 //= require './spine/controller.module'
 //= require './spine/list.module'
+//= require './spine/model.module'
 
 # Globals
 Exo = @Exo = {}
