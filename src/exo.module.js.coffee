@@ -12,6 +12,7 @@ Exo.Node = require './node'
 Exo.Spine = {}
 Exo.Spine.Controller = require './spine/controller'
 Exo.Spine.List = require './spine/list'
+Exo.Spine.Model = require './spine/model'
 
 module.exports = Exo
 
