@@ -205,8 +205,10 @@ class Node
 		@toggle = -> Node.toggle @
 		
 		# TODO
-		#deactivateChildren: ->
-		
+		@deactivateChildren = ->
+			for child in @children()
+				child.deactivate()
+
 		@onActivated = ->
 			@sm().onTransitionComplete()
 			Node.onNodeActivated @
