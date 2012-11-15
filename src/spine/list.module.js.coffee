@@ -14,8 +14,8 @@ class List extends Exo.Spine.Controller
 	#debug: true
 	
 	constructor: (opts={}) ->
-		opts.initialState = Exo.Node.States.ACTIVATED
-		opts.mode = Exo.Node.Modes.MULTI
+		opts.initialState ||= Exo.Node.States.ACTIVATED
+		opts.mode ||= Exo.Node.Modes.MULTI
 		super opts
 
 	templateFor: (templates, item) ->
