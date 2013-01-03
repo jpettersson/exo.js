@@ -1,5 +1,3 @@
-Node = require '../node'
-
 class Controller extends Spine.Controller
 
 	@Events:
@@ -61,7 +59,7 @@ class Controller extends Spine.Controller
 
 	constructor: (opts={}) ->
 		# keep a private reference to a Node instance.
-		node = new Node opts
+		node = new Exo.Node opts
 		that = @
 		
 		@node = ()->
@@ -76,10 +74,10 @@ class Controller extends Spine.Controller
 						# if the param is 'that', convert it to the Node instance reference.
 						modParams = params.map (p) -> if p is node then that else p
 						# call the Class function on Node with our modified params and return.
-						Node[fn].apply(Node, modParams)
+						Exo.Node[fn].apply(Exo.Node, modParams)
 					else
 						# call the class function on Node without any params.
-						Node[fn]()
+						Exo.Node[fn]()
 					
 			a(func)
 
@@ -155,5 +153,4 @@ class Controller extends Spine.Controller
 	onChildActivated: (child) ->
 	onChildDeactivated: (child) ->
 
-
-module.exports = Controller
+Exo.Spine.Controller = Controller

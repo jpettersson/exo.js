@@ -19,4 +19,4 @@ class Model extends Spine.Model
 	getClassName: ->
 		@constructor.className
 
-module.exports = Model
+Exo.Spine.Model = Model

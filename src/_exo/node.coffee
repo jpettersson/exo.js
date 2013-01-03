@@ -1,8 +1,3 @@
-# Exo.Node can be used to build an arbitrarily large directed graph
-# of ui components that will be controlled hierarchical from the top down.
-
-StateMachine = require './state_machine'
-
 class Node
 
 	@Transitions:
@@ -104,7 +99,7 @@ class Node
 		# Create and return the state machine instance
 		smRef = null
 		@sm = ->
-			smRef ||= new StateMachine
+			smRef ||= new Exo.StateMachine
 				states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
 				initialState: initialState
 				transitions:
@@ -229,4 +224,4 @@ class Node
 
 	onChildDeactivated: (child) ->
 
-module.exports = Node
+Exo.Node = Node
