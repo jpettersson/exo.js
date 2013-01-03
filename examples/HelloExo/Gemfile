@@ -1,5 +1,0 @@
-source 'https://rubygems.org'
-gem 'compass'
-gem 'catapult'
-gem "haml-sprockets", :path => 'vendor/haml-sprockets'
-gem "sprockets-sass"

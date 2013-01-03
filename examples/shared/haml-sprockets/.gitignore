@@ -1,7 +1,0 @@
-*swp
-*~
-*bak
-*.gem
-.bundle
-Gemfile.lock
-pkg/*
