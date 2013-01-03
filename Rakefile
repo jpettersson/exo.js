@@ -8,7 +8,7 @@ Bundler.require
 
 ROOT        = Pathname(File.dirname(__FILE__))
 LOGGER      = Logger.new(STDOUT)
-BUNDLES     = %w( src/exo.coffee src/spine.coffee )
+BUNDLES     = %w( exo.coffee spine.coffee )
 BUILD_DIR   = ROOT.join("lib")
 SOURCE_DIR  = ROOT.join("src")
 
@@ -21,14 +21,8 @@ task :compile do
 
   BUNDLES.each do |bundle|
     assets = sprockets.find_asset(bundle)
-    prefix, basename = assets.pathname.to_s.split('/')[-2..-1]
-    FileUtils.mkpath BUILD_DIR.join(prefix)
+    basename = assets.pathname.to_s.split('/')[-1].split(".").first
 
-    assets.write_to(BUILD_DIR.join(prefix, basename))
-    assets.to_a.each do |asset|
-      # strip filename.css.foo.bar.css multiple extensions
-      realname = asset.pathname.basename.to_s.split(".")[0..1].join(".")
-      asset.write_to(BUILD_DIR.join(prefix, realname))
-    end
+    assets.write_to(BUILD_DIR.join("#{basename}.js"))
   end
 end

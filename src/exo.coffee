@@ -1,6 +1,6 @@
 #= require_self
-#= require './state_machine.module'
-#= require './node.module'
+#= require './_exo/state_machine'
+#= require './_exo/node'
 
 # Globals
 Exo = @Exo = {}
