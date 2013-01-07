@@ -15,7 +15,7 @@ The core of the Exo lib is a FSM (Finite State Machine) implementation. This cla
 
 Exo.Node
 --------
-The Exo Node is the real workhorse of the Exo lib. The Node is very oppionated and assumes that all your UI components can be broken down into hierarchies of little machines with the following properties: 
+The Exo Node is the real workhorse of the Exo lib. The Node is very opinionated and assumes that all your UI components can be broken down into hierarchies of little machines with the following properties: 
 
 A node has an internal FSM with two states and two transitions: 
 
