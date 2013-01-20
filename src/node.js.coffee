@@ -1,9 +1,9 @@
 # Exo.Node can be used to build an arbitrarily large directed graph
 # of ui components that will be controlled hierarchical from the top down.
 
-StateMachine = Exo.StateMachine
+StateMachine = require './state_machine'
 
-class Exo.Node
+class Node
 
 	@Transitions:
 		ACTIVATE: 'activate'
@@ -82,11 +82,17 @@ class Exo.Node
 			else if action.transition == Node.Transitions.DEACTIVATE
 				@deactivate(action.node)
 
-	# # # instance
+	# Instance functions
 
 	constructor: (opts={})->
 		parent = null
-		children = opts.children || []
+		children = []
+
+		# Did we receive an array of children from the opts hash?
+		if opts.children
+			for node in opts.children
+				node.setParent @
+			children = opts.children
 
 		id = opts.id
 		mode = opts.mode ||= Node.Modes.EXCLUSIVE
@@ -95,8 +101,8 @@ class Exo.Node
 		onActivatedAction = null
 		onDeactivatedAction = null
 
-		smRef = null
 		# Create and return the state machine instance
+		smRef = null
 		@sm = ->
 			smRef ||= new StateMachine
 				states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
@@ -109,14 +115,14 @@ class Exo.Node
 						from: Node.States.ACTIVATED
 						to: Node.States.DEACTIVATED
 
+		# Add a callback lambda to the SM and map the two
+		# state transitions to methods in this class.
 		@sm().performTransition = (t) =>
 			if t == Node.Transitions.ACTIVATE
 				@beforeActivate()
-				#@trigger 'activating', @
 				@doActivate()
 			else if t == Node.Transitions.DEACTIVATE
 				@beforeDeactivate()
-				#@trigger 'deactivating', @
 				@doDeactivate()
 
 		@setOnActivatedAction = (action) ->
@@ -145,12 +151,6 @@ class Exo.Node
 
 		@addChild = (node) ->
 			node.setParent(@)
-
-			# node.bind 'onActivated', =>
-			# 	@onChildActivated node
-			# node.bind 'onDeactivated', =>
-			# 	@onChildDeactivated node
-
 			children.push node
 
 		@removeChild = (node) ->
@@ -205,7 +205,9 @@ class Exo.Node
 		@toggle = -> Node.toggle @
 
 		# TODO
-		#deactivateChildren: ->
+		@deactivateChildren = ->
+			for child in @children()
+				child.deactivate()
 
 		@onActivated = ->
 			@sm().onTransitionComplete()
@@ -227,4 +229,4 @@ class Exo.Node
 
 	onChildDeactivated: (child) ->
 
-
+module.exports = Node

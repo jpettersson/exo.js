@@ -1,10 +1,12 @@
-Node = Exo.Node
+Node = require '../node'
 
-class Exo.Spine.Controller extends Spine.Controller
+class Controller extends Spine.Controller
 
 	@Events:
 		ON_ACTIVATED: 'onActivated'
 		ON_DEACTIVATED: 'onDeactivated'
+		BEFORE_ACTIVATE: 'beforeActivate'
+		BEFORE_DEACTIVATE: 'beforeDeactivate'
 
 	@NodeClassFuncs = [
 		'activate'
@@ -41,6 +43,7 @@ class Exo.Spine.Controller extends Spine.Controller
 		'onActivatedAction'
 		'setOnDeactivatedAction'
 		'onDeactivatedAction'
+		'deactivateChildren'
 		# These are special, since we want to override them override them on
 		# this object, explain this better.
 		#'onActivated'
@@ -98,6 +101,12 @@ class Exo.Spine.Controller extends Spine.Controller
 					that[fn].apply(that, params)
 			a(func)
 
+			# node['beforeActivate'] = (params...) ->
+			# 	that['proxyBeforeActivate'].apply that, params
+
+			# node['beforeDeactivate'] = (params...) ->
+			# 	that['proxyBeforeDeactivate'].apply that, params
+
 		# Hack hack.. make sure we always add the Controller instance and not the Node.
 		@addChild = (node) ->
 			node.setParent(@)
@@ -112,6 +121,7 @@ class Exo.Spine.Controller extends Spine.Controller
 
 		delete opts.initialState if opts.initialState
 		delete opts.mode if opts.mode
+		delete opts.children if opts.children
 
 		super opts
 		@prepare()
@@ -119,13 +129,23 @@ class Exo.Spine.Controller extends Spine.Controller
 	# Public
 	prepare: ->
 
+	proxyBeforeActivate: ->
+		@trigger Controller.Events.BEFORE_ACTIVATE, @
+		@beforeActivate()
+
 	beforeActivate: ->
+
 	doActivate: ->
 	onActivated: ->
 		@node().onActivated()
 		@trigger Controller.Events.ON_ACTIVATED, @
 
+	proxyBeforeDeactivate: ->
+		@trigger Controller.Events.BEFORE_DEACTIVATE, @
+		@beforeDeactivate()
+
 	beforeDeactivate: ->
+
 	doDeactivate: ->
 	onDeactivated: ->
 		@node().onDeactivated()
@@ -136,3 +156,4 @@ class Exo.Spine.Controller extends Spine.Controller
 	onChildDeactivated: (child) ->
 
 
+module.exports = Controller

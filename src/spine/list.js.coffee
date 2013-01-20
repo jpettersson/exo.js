@@ -14,8 +14,8 @@ class Exo.Spine.List extends Exo.Spine.Controller
 	#debug: true
 
 	constructor: (opts={}) ->
-		opts.initialState = Exo.Node.States.ACTIVATED
-		opts.mode = Exo.Node.Modes.MULTI
+		opts.initialState ||= Exo.Node.States.ACTIVATED
+		opts.mode ||= Exo.Node.Modes.MULTI
 		super opts
 
 	templateFor: (templates, item) ->
@@ -33,7 +33,10 @@ class Exo.Spine.List extends Exo.Spine.Controller
 
 	renderTemplates: (collection) ->
 		templates = @templates || {default: @template}
-		@html collection.map (item) => (templates.default or templates[item.constructor.className]).call(@, [item])[0]
+		for item in collection 
+			html = (templates.default or templates[item.constructor.className]).call(@, item)
+			el = $(html).appendTo(@el)
+			$(el).data('item', item)
 
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
