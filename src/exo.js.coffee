@@ -1,22 +1,9 @@
 //= require './namespace'
-//= require './state_machine.module'
-//= require './node.module'
-//= require './spine/controller.module'
-//= require './spine/list.module'
-//= require './spine/model.module'
+//= require './state_machine'
+//= require './node'
+//= require './spine/controller'
+//= require './spine/list'
 
-# Globals
-Exo = @Exo = {}
-Exo.StateMachine = require './state_machine'
-Exo.Node = require './node'
-
-# Framwork specifics
-Exo.Spine = {}
-Exo.Spine.Controller = require './spine/controller'
-Exo.Spine.List = require './spine/list'
-Exo.Spine.Model = require './spine/model'
-
-module.exports = Exo
 
 #Exo.Model = require('./vendor/exo/model')
 #Exo.Controller = require('./vendor/exo/controller')					# Note: If you subclass any of your own lib classes

@@ -1,6 +1,6 @@
-Node = require '../node'
+Node = Exo.Node
 
-class Controller extends Spine.Controller
+class Exo.Spine.Controller extends Spine.Controller
 
 	@Events:
 		ON_ACTIVATED: 'onActivated'
@@ -154,6 +154,3 @@ class Controller extends Spine.Controller
 	onChildAdded: (child) ->
 	onChildActivated: (child) ->
 	onChildDeactivated: (child) ->
-
-
-module.exports = Controller

@@ -1,9 +1,8 @@
 # Exo.Node can be used to build an arbitrarily large directed graph
 # of ui components that will be controlled hierarchical from the top down.
++StateMachine = Exo.StateMachine
 
-StateMachine = require './state_machine'
-
-class Node
+class Exo.Node
 
 	@Transitions:
 		ACTIVATE: 'activate'
