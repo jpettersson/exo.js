@@ -227,5 +227,3 @@ class Exo.Node
 	onChildActivated: (child) ->
 
 	onChildDeactivated: (child) ->
-
-module.exports = Node
