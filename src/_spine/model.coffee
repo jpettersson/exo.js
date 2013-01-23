@@ -7,7 +7,7 @@ class Model extends Spine.Model
 		attributes = attributes.concat(['created_at', 'updated_at'])
 		super name, attributes...
 
-	@create: (atts, options) ->
+	@create: (atts={}, options={}) ->
 		
 		# Set default values
 		for attribute in @attributes
