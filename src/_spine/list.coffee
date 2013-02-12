@@ -1,16 +1,5 @@
 class List extends Exo.Spine.Controller
 	
-	###
-		
-		TODO: 
-		* Add option to auto select any item on render.
-		* Allow the items to be Exo.Controller instances
-			* Allow each item to have it's own in/out transitions.
-			* Allow the entire list to have a single in/out transition.
-		* Allow the items to be simple rendered views.
-		
-	###
-
 	#debug: true
 	
 	constructor: (opts={}) ->
