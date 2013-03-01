@@ -62,6 +62,8 @@ class Controller extends Spine.Controller
 		node = new Exo.Node opts
 		that = @
 		
+		@id = node.id
+
 		@node = ()->
 			node
 
@@ -106,16 +108,11 @@ class Controller extends Spine.Controller
 			# 	that['proxyBeforeDeactivate'].apply that, params
 
 		# Hack hack.. make sure we always add the Controller instance and not the Node.
-		@addChild = (node) ->
-			node.setParent(@)
+		@addChild = (controller) ->
+			controller.setParent(@)
 
-			# node.bind 'onActivated', =>
-			# 	@onChildActivated node
-			# node.bind 'onDeactivated', =>
-			# 	@onChildDeactivated node
-
-			@children().push node
-			@onChildAdded node
+			node.addChild controller
+			@onChildAdded controller
 
 		delete opts.initialState if opts.initialState
 		delete opts.mode if opts.mode

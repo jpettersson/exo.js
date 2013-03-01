@@ -1,5 +1,12 @@
 class Node
 
+	@__currentId = 0
+
+	@nextId: ->
+		Node.__currentId = Node.__currentId + 1
+
+		return Node.__currentId
+
 	@Transitions:
 		ACTIVATE: 'activate'
 		DEACTIVATE: 'deactivate'
@@ -81,15 +88,17 @@ class Node
 	
 	constructor: (opts={})->
 		parent = null
-		children = []
+		__childMap = {}
+	
+		@id = "exo##{Node.nextId()}"
 
 		# Did we receive an array of children from the opts hash?
 		if opts.children
 			for node in opts.children
 				node.setParent @
-			children = opts.children
+				for child in opts.children
+					@addChild child
 
-		id = opts.id
 		mode = opts.mode ||= Node.Modes.EXCLUSIVE
 		initialState = opts.initialState ||= Node.States.DEACTIVATED
 
@@ -144,21 +153,29 @@ class Node
 		@parent = ->
 			parent
 
+		@childrenAsArray = (obj) ->
+			arr = []
+			for id, child of __childMap
+				arr.push child
+			return arr
+
 		@addChild = (node) ->
 			node.setParent(@)
-			children.push node
-
+			__childMap[node.id] = node
+			#console.log "addChild:", node.id, __childMap[node.id] 
+			
 		@removeChild = (node) ->
-			children = children.filter (a) -> a isnt node
+			delete __childMap[node.id]
 		
 		@children = ->
-			children
+			@childrenAsArray()
 
 		@activatedChildren = ->
-			children.filter (n) -> n.isActivated()
-		
+			@children().filter (n) -> n.isActivated()
+
 		@childById = (id) ->
-			children.filter((n) -> n.id == id)[0]
+			#console.log "childById:", id, __childMap[id]
+			__childMap[id]
 
 		@descendantById = (id) ->
 			child = childById(id)
@@ -188,7 +205,7 @@ class Node
 			if @mode() == Node.Modes.EXCLUSIVE
 				# Why was this in here? It didn't work.. check old implementation!
 				# return true if @onActivatedAction() != null or @onDeactivatedAction() != null
-				return true if children.filter((n) -> n.isBusy()).length > 0
+				return true if @children().filter((n) -> n.isBusy()).length > 0
 
 			return false
 

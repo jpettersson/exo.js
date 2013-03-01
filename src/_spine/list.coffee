@@ -3,6 +3,7 @@ class List extends Exo.Spine.Controller
 	#debug: true
 	
 	constructor: (opts={}) ->
+		#@debug = true
 		opts.initialState ||= Exo.Node.States.ACTIVATED
 		opts.mode ||= Exo.Node.Modes.MULTI
 		super opts
@@ -29,9 +30,7 @@ class List extends Exo.Spine.Controller
 
 	renderControllers: (collection) ->
 		controllers = @controllers || {default: @controller}
-		# Dynamically create child controllers
-		
-		#Also, change the actual div order!
+
 		@deactivateAndKillOrphans(@children(), collection)
 
 		for item, i in collection
