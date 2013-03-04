@@ -52,6 +52,7 @@ class List extends Exo.Spine.Controller
 			@addChild child
 			child.prepareWithModel item
 			@append child
+			$(child.el).data('item', item)
 			console.log "child was created: #{child.id}" if @debug
 
 		else
