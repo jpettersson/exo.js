@@ -1,3 +1,5 @@
+Exo = @Exo or require 'exo'
+
 class StateMachine
 	
 	@E_DUPLICATE_STATE = "E_DUPLICATE_STATE: States must be distinct"
@@ -75,6 +77,5 @@ class StateMachine
 			initialState
 
 	performTransition: (transitionName) ->
-
 
 Exo.StateMachine = StateMachine

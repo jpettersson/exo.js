@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "mocha": "1.8.1",
+    "should": "1.2.2",
+    "coffee-script": "1.6.1",
+    "require-dir": "0.1.0"
+  }
+}

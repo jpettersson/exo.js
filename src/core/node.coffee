@@ -1,3 +1,6 @@
+Exo = @Exo or require 'exo'
+StateMachine = Exo.StateMachine
+
 class Node
 
 	@__currentId = 0
@@ -108,7 +111,7 @@ class Node
 		# Create and return the state machine instance
 		smRef = null
 		@sm = ->
-			smRef ||= new Exo.StateMachine
+			smRef ||= new StateMachine
 				states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
 				initialState: initialState
 				transitions:
