@@ -1,5 +1,10 @@
-{requireDir} = require 'require-dir'
+requireDir = require 'require-dir'
 
-Exo = require '../src/exo'
+# traverse = (tree)=>
+#   for subtree, node of tree
+#     if node && {}.toString.call(node) == '[object Function]'
+#       node.call @
+#     else
+#       traverse(node)
 
 requireDir "./specs", {recurse: true}

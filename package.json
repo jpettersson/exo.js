@@ -1,8 +1,20 @@
 {
-  "dependencies": {
+  "name": "exo",
+  "description": "GUI State Management",
+  "version": "0.0.1",
+  "author": "jpettersson",
+  "keywords": ["spine", "coffeescript", "GUI", "state management"],
+  "contributors": ["jpettersson"],
+  "repository": {
+    "type" : "git",
+    "url": "http://github.com/jpettersson/exo.git"
+  },
+  "main" : "./index.js",
+  "dev-dependencies": {
     "mocha": "1.8.1",
     "should": "1.2.2",
+    "expect.js": "0.2.0",
     "coffee-script": "1.6.1",
     "require-dir": "0.1.0"
-  }
+  }  
 }
