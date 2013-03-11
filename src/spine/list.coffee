@@ -82,4 +82,6 @@ class List extends Exo.Spine.Controller
 		@trigger('select', item, $(e.currentTarget))
 		true
 
-Exo.Spine.List = List
+Exo?.Spine ||= {}
+Exo?.Spine.List = List
+module?.exports = List

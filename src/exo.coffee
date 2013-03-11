@@ -319,7 +319,6 @@ class Node
 
   onChildDeactivated: (child) ->
 
-
 Exo = @Exo = {}
 Exo.StateMachine = StateMachine
 Exo.Node = Node

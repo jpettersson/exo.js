@@ -1,3 +1,5 @@
+Spine = @Spine or require('spine')
+
 class Controller extends Spine.Controller
 
 	@Events:
@@ -150,4 +152,6 @@ class Controller extends Spine.Controller
 	onChildActivated: (child) ->
 	onChildDeactivated: (child) ->
 
-Exo.Spine.Controller = Controller
+Exo?.Spine ||= {}
+Exo?.Spine.Controller = Controller
+module?.exports = Controller

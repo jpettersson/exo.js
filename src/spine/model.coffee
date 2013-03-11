@@ -1,3 +1,5 @@
+Spine = @Spine or require('spine')
+
 class Model extends Spine.Model
 	
 	@defaults: (atts) ->
@@ -20,4 +22,6 @@ class Model extends Spine.Model
 	getClassName: ->
 		@constructor.className
 
-Exo.Spine.Model = Model
+Exo?.Spine ||= {}
+Exo?.Spine.Model = Model
+module?.exports = Model

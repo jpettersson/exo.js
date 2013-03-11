@@ -1,5 +1,3 @@
-expect = require 'expect.js'
-Exo = require('../../src/exo')
 Node = Exo.Node
 
 describe "Node as a new instance", ->

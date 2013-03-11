@@ -1,5 +1,6 @@
 expect = require 'expect.js'
-Exo = require('../../src/exo')
+Exo = global.Exo
+
 StateMachine = Exo.StateMachine
 
 describe 'StateMachine', ->
