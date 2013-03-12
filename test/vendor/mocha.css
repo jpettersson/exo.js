@@ -1,8 +1,10 @@
 @charset "utf-8";
 
 body {
-  font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 20px/1.5 "Meslo LG S DZ", monospace;
   padding: 60px 50px;
+  background-color: #302f2f;
+  color: #E6E6E6;
 }
 
 #mocha ul, #mocha li {
@@ -20,8 +22,8 @@ body {
 
 #mocha h1 {
   margin-top: 15px;
-  font-size: 1em;
-  font-weight: 200;
+  font-size: .8em;
+  font-weight: 100;
 }
 
 #mocha h1 a {
@@ -59,7 +61,10 @@ body {
 
 #mocha .test.pending:hover h2::after {
   content: '(pending)';
-  font-family: arial;
+}
+
+#mocha .test.pass {
+  color: #8fbe00;
 }
 
 #mocha .test.pass.medium .duration {
@@ -108,7 +113,7 @@ body {
 }
 
 #mocha .test.fail {
-  color: #c00;
+  color: #A85D5D;
 }
 
 #mocha .test.fail pre {
@@ -121,11 +126,11 @@ body {
   display: block;
   float: left;
   margin-right: 5px;
-  color: #c00;
+  color: #A85D5D;
 }
 
 #mocha .test pre.error {
-  color: #c00;
+  color: #b03911;
   max-height: 300px;
   overflow: auto;
 }
@@ -137,12 +142,7 @@ body {
   font: 12px/1.5 monaco, monospace;
   margin: 5px;
   padding: 15px;
-  border: 1px solid #eee;
-  border-bottom-color: #ddd;
-  -webkit-border-radius: 3px;
-  -webkit-box-shadow: 0 1px 3px #eee;
-  -moz-border-radius: 3px;
-  -moz-box-shadow: 0 1px 3px #eee;
+  border: 1px solid #A85D5D;
 }
 
 #mocha .test h2 {
