@@ -12,10 +12,12 @@
   "main" : "./index.js",
   "devDependencies": {
     "mocha": "1.8.1",
+    "mocha-phantomjs": "2.0.1",
     "should": "1.2.2",
     "expect.js": "0.2.0",
     "coffee-script": "1.6.1",
     "require-dir": "0.1.0",
-    "spine": "1.0.9"
+    "spine": "1.0.9",
+    "async": "0.2.6"
   }  
 }

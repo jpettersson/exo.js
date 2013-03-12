@@ -76,4 +76,4 @@ class StateMachine
 
   performTransition: (transitionName) ->
 
-module?.exports = StateMachine
+Exo.StateMachine = StateMachine

@@ -53,7 +53,7 @@ describe "when instantiating new instances", ->
       failSm = new StateMachine
         states: ['A', 'A']
         initialState: 'A'
-    ).to.throwException StateMachine.E_DUPLICATE_STATE
+    ).to.throw StateMachine.E_DUPLICATE_STATE
 
   it 'should not allow duplicate transitions', ->
     expect( ->
@@ -68,7 +68,7 @@ describe "when instantiating new instances", ->
           t1:
             from: 'A'
             to: 'B'
-    ).to.throwException StateMachine.E_DUPLICATE_TRANSITION
+    ).to.throw StateMachine.E_DUPLICATE_TRANSITION
 
   it 'should not allow undefined states', ->
     expect( ->
@@ -83,4 +83,4 @@ describe "when instantiating new instances", ->
           t1:
             from: 'A'
             to: 'C'
-    ).to.throwException StateMachine.E_UNDEFINED_STATE
+    ).to.throw StateMachine.E_UNDEFINED_STATE

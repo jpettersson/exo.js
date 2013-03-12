@@ -241,4 +241,4 @@ class Node
 
   onChildDeactivated: (child) ->
 
-module?.exports = Node
+Exo.Node = Node

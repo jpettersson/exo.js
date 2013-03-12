@@ -1,3 +1,2 @@
 Exo = @Exo = {}
-Exo.StateMachine = StateMachine
-Exo.Node = Node
+module?.exports = Exo
