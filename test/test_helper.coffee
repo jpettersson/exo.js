@@ -9,7 +9,10 @@ requireDir = require 'require-dir'
 
 global.expect = require 'expect.js'
 
-global.Exo = require '../src/exo'
+global.Exo = {}
+
+global.Exo.StateMachine = require '../src/core/state_machine'
+global.Exo.Node = require '../src/core/node'
 
 global.Exo.Spine = {}
 global.Exo.Spine.Model = require '../src/spine/Model'

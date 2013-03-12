@@ -1,6 +1,3 @@
-expect = require 'expect.js'
-Exo = global.Exo
-
 StateMachine = Exo.StateMachine
 
 describe 'StateMachine', ->
