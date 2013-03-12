@@ -7,12 +7,15 @@
     <div id="mocha"></div>
     <script src="vendor/mocha.js"></script>
     <script src="vendor/chai.js"></script>
+    <script src="vendor/spine/spine.js"></script>
+    <script src="../lib/exo.js"></script>
+    <script src="../lib/spine.exo.js"></script>
+
     <script>
       mocha.ui('bdd'); 
       mocha.reporter('html');
       expect = chai.expect;
     </script>
-    <script src="../lib/exo.js"></script>
     <script src="build/core.specs.js"></script>
     <script src="build/spine.specs.js"></script>
     <script>
