@@ -65,42 +65,7 @@ build = (packages, callback) ->
 
 test = ->
   mochaCmd = 'mocha-phantomjs' + if process.platform is 'win32' then '.cmd' else ''
-  args = ['-R', 'dot', 'test/test.html']
+  args = ['-R', 'json', 'test/test.html']
   
   console.log mochaCmd, args.join ' '
   spawn mochaCmd, args, {stdio: "inherit"}
-
-  # tester = (file) ->
-  #   (callback) ->
-  #     mochaCmd = 'mocha' + if process.platform is 'win32' then '.cmd' else ''
-  #     mocha = spawn mochaCmd, ['-u', 'bdd', '-R', 'spec', '-t', '20000', '--colors', "test/lib/#{file}"]
-  #     mocha.stdout.pipe process.stdout, end: false
-  #     mocha.stderr.pipe process.stderr, end: false
-  #     mocha.on 'exit', (code) -> callback?(code,code)
-
-  # testFiles = ['mocha-phantomjs.js']
-  # testers = (tester file for file in testFiles)
-  # async.series testers, (err, results) -> 
-  #   passed = results.every (code) -> code is 0
-  #   process.exit if passed then 0 else 1
-
-
-# buildSpecs = ->
-#   specs = [
-#     'test/specs/state_machine_spec.coffee'
-#     'test/specs/node_spec.coffee'
-#     'test/specs/spine/controller_spec.coffee'
-#   ]
-
-#   compileCoffeeScript ['-cj', "test/specs.js"].concat(specs)
-
-# task 'build', 'Build lib/ from src/', ->
-#   buildLib()
-
-# task 'test', "Run the test suites", ->
-#   buildLib()
-#   buildSpecs()
-
-#   mocha = spawn 'mocha-phantomjs', ['-R dot', 'test/test.html']
-#   #mocha = spawn 'mocha', ['--compilers', 'coffee:coffee-script', 'test/test_helper.coffee'], {stdio: "inherit"}
-
