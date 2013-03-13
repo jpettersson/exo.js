@@ -35,6 +35,7 @@ SPEC_PACKAGES = [
     output: 'test/build/spine.specs.js'
     files: [
       'test/specs/spine/controller_spec.coffee'
+      'test/specs/spine/list_spec.coffee'
     ]
   }
 ]

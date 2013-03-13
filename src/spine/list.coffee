@@ -1,9 +1,6 @@
 class List extends Exo.Spine.Controller
 	
-	#debug: true
-	
 	constructor: (opts={}) ->
-		#@debug = true
 		opts.initialState ||= Exo.Node.States.ACTIVATED
 		opts.mode ||= Exo.Node.Modes.MULTI
 		super opts
@@ -42,8 +39,6 @@ class List extends Exo.Spine.Controller
 
 		@trigger 'afterRender', @
 
-		console.log "children before deactivate: #{@children().length}" if @debug
-
 	getOrCreateChild: (item, controller) ->
 		child = @childById(item.constructor.className + item.id)
 		unless child
@@ -53,10 +48,6 @@ class List extends Exo.Spine.Controller
 			child.prepareWithModel item
 			@append child
 			$(child.el).data('item', item)
-			console.log "child was created: #{child.id}" if @debug
-
-		else
-			console.log "child was found: #{child.id}" if @debug
 
 		return child
 
@@ -64,10 +55,8 @@ class List extends Exo.Spine.Controller
 	deactivateAndKillOrphans: (children, collection) ->
 		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.constructor.className + item.id
 		for orphan in orphans
-			console.log "Deactivate: #{orphan.id}" if @debug
 			if orphan.isActivated() and not orphan.isBusy()
 				orphan.bind 'onDeactivated', (controller) =>
-					console.log "Remove child: #{controller.id}" if @debug
 					@removeChild controller
 					controller.release()
 
