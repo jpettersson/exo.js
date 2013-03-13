@@ -36,6 +36,7 @@ SPEC_PACKAGES = [
     files: [
       'test/specs/spine/controller_spec.coffee'
       'test/specs/spine/list_spec.coffee'
+      'test/specs/spine/model_spec.coffee'
     ]
   }
 ]
