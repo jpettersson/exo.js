@@ -15,7 +15,7 @@ class Controller extends Spine.Controller
         _node.controller = @
       _node
 
-    @nodeId = -> @node().id
+    @nodeId = -> @node().nodeId()
     @setId = (id)-> @node.setId(id)
     @setMode = (mode)-> @node().setMode(mode)
 
@@ -29,11 +29,19 @@ class Controller extends Spine.Controller
       @node().toggle()
 
     # Delegate the transitions to this object.
+    @node().beforeActivate = =>
+      @trigger 'beforeActivate', @
+      @beforeActivate?.call @
+
     @node().doActivate = =>
       @doActivate()
 
-    @node().doDectivate = =>
-      @doDectivate()
+    @node().beforeDeactivate = =>
+      @trigger 'beforeDeactivate', @
+      @beforeDeactivate?.call @
+
+    @node().doDeactivate = =>
+      @doDeactivate()
 
     # TODO: Make sure the node function exists and throw an Exo.Incompatible 
     # object error if not.
@@ -81,7 +89,7 @@ class Controller extends Spine.Controller
   # Todo: Only dispatch event if the call to the node was successful
   onDeactivated: ->
     @node().onDeactivated()
-    @trigger 'onActivated', @
+    @trigger 'onDeactivated', @
 
 Exo.Spine ||= {}
 Exo.Spine.Controller = Controller

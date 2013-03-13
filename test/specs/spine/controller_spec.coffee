@@ -36,6 +36,36 @@ describe "Exo.Spine.Controller as a new instance", ->
     test.removeChild(test.children()[0])
     expect(test.children().length).to.equal 4
 
+  it 'should trigger "onActivated" and pass itself when activated', (done)->
+    test.bind 'onActivated', (controller)->
+      expect(controller.nodeId()).to.equal test.nodeId()
+      done()
+
+    test.activate()
+
+  it 'should trigger "onDectivated" and pass itself when deactivated', (done)->
+    test.bind 'onDeactivated', (controller)->
+      expect(controller.nodeId()).to.equal test.nodeId()
+      done()
+
+    test.activate()
+    test.deactivate()
+
+  it 'should trigger "beforeActivate" when activating', (done)->
+    test.bind 'beforeActivate', (controller)->
+      expect(controller.nodeId()).to.equal test.nodeId()
+      done()
+
+    test.activate()
+
+  it 'should trigger "beforeActivate" when activating', (done)->
+    test.bind 'beforeDeactivate', (controller)->
+      expect(controller.nodeId()).to.equal test.nodeId()
+      done()
+
+    test.activate()
+    test.deactivate()
+
 describe 'Exo.Spine.Controller as a child and sibling', ->
   p = test = s = null
 
