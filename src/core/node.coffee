@@ -96,6 +96,9 @@ class Node
     @nodeId = ->
       id
 
+    @setNodeId = (nid)->
+      id = nid
+
     # Did we receive an array of children from the opts hash?
     if opts.children
       for node in opts.children
@@ -201,7 +204,7 @@ class Node
       __childMap[id]
 
     @descendantById = (id) ->
-      child = childById(id)
+      child = @childById(id)
       if child 
         return child
 
