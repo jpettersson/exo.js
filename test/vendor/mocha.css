@@ -205,7 +205,7 @@ body {
 }
 
 #mocha-stats em {
-  color: black;
+  color: #fff;
 }
 
 #mocha-stats a {
