@@ -15,6 +15,10 @@ describe "Exo.Spine.Controller as a new instance", ->
   beforeEach ->
     test = new Exo.Spine.Controller
 
+  it 'should be possible to set nodeId', ->
+    test.setNodeId('banana')
+    expect(test.nodeId()).to.equal 'banana'
+
   it 'should be deactivated', ->
     expect(test.isActivated()).to.equal false
 
@@ -46,6 +50,32 @@ describe "Exo.Spine.Controller as a new instance", ->
 
     test.removeChild(test.children()[0])
     expect(test.children().length).to.equal 4
+
+  it 'should not allow passing self to addChild', ->
+    expect( ->
+      test.addChild(test)
+    ).to.throw /ExoReferenceError/
+
+  it 'should not allow passing null to addChild', ->
+    expect( ->
+      test.addChild(null)
+    ).to.throw /ExoReferenceError/
+
+  it 'should not allow passing undefined to addChild', ->
+    expect( ->
+      test.addChild()
+    ).to.throw /ExoReferenceError/
+
+  it 'should not allow a child to activate it if opts.childrenCanActivate = false', ->
+    test = new Exo.Spine.Controller
+      childrenCanActivate: false
+
+    c = new Exo.Spine.Controller
+    test.addChild c
+    c.activate()
+
+    expect(c.isActivated()).to.equal false
+    expect(test.isActivated()).to.equal false
 
   it 'should throw "Exo: Incompatible object" when invalid objects are passed to node.addChild'
 
@@ -105,6 +135,14 @@ describe 'Exo.Spine.Controller as a child and sibling', ->
     s.activate()
     test.activate()
     expect(test.isActivated() and p.isActivated() and not s.isActivated()).to.equal true
+
+  it "should be possible to fetch a child by id", ->
+    expect(p.childById(s.nodeId())).to.be.an('object')
+    expect(p.childById(s.nodeId()).nodeId()).to.equal s.nodeId()
+
+  it "should be possible to fetch a descendant by id", ->
+    expect(p.descendantById(s.nodeId())).to.be.an('object')
+    expect(p.descendantById(s.nodeId()).nodeId()).to.equal s.nodeId()
 
 describe "Exo.Spine.Controller as a parent and child", ->
   p = c = test = null
