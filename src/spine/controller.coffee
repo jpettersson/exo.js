@@ -2,156 +2,63 @@ Spine = @Spine or require('spine')
 
 class Controller extends Spine.Controller
 
-	@Events:
-		ON_ACTIVATED: 'onActivated'
-		ON_DEACTIVATED: 'onDeactivated'
-		BEFORE_ACTIVATE: 'beforeActivate'
-		BEFORE_DEACTIVATE: 'beforeDeactivate'
+  constructor: (opts={})->
+    super
 
-	@NodeClassFuncs = [
-		'activate'
-		'deactivate'
-		'toggle'
-		'lineageIsBusy'
-		'onNodeActivated'
-		'onNodeDeactivated'
-		'processAction'
-	]
+    _node = null
+    @node = ->
+      unless _node
+        _node = new Exo.Node opts
 
-	@NodePrivilegedFuncs = [
-		# privileged
-		'sm'
-		'setParent'
-		'parent'
-		#'addChild'
-		'removeChild'
-		'children'
-		'activatedChildren'
-		'childById'
-		'descendantById'
-		'siblings'
-		'isActivated'
-		'isTransitioning'
-		'isBusy'
-		'attemptTransition'
-		'activate'
-		'deactivate'
-		'toggle'
-		'setMode'
-		'mode'
-		'setOnActivatedAction'
-		'onActivatedAction'
-		'setOnDeactivatedAction'
-		'onDeactivatedAction'
-		'deactivateChildren'
-		# These are special, since we want to override them override them on 
-		# this object, explain this better.
-		#'onActivated'
-		#'onDeactivated'
-	]	
+        # Store a reference of this to substitute
+        # in outgoing events/function calls.
+        _node.controller = @
+      _node
 
-	@NodePublicFuncs = [
-		'beforeActivate'
-		'doActivate'
-		'beforeDeactivate'
-		'doDeactivate'
-		'onChildActivated'
-		'onChildDeactivated'
-	]
+    @nodeId = -> @node().id
+    @setId = (id)-> @node.setId(id)
 
-	constructor: (opts={}) ->
-		# keep a private reference to a Node instance.
-		node = new Exo.Node opts
-		that = @
-		
-		@id = node.id
+    @activate = -> @node().activate()
+    @deactivate = -> @node().deactivate()
+    @toggle = -> @node().toggle()
 
-		@node = ()->
-			node
+    #TODO: Make sure the node function exists and throw an Exo.Incompatible object error if not.
+    @addChild = (controller)-> @node().addChild controller.node()
+    @children = ->
+      @node().children().map (node)-> node.controller
 
-		# Map the Node Class functions to our Class.
-		for func in Controller.NodeClassFuncs
-			a = (fn) ->
-				# add function as a prop on Controller
-				Controller[fn] = (params...) -> 
-					if params
-						# if the param is 'that', convert it to the Node instance reference.
-						modParams = params.map (p) -> if p is node then that else p
-						# call the Class function on Node with our modified params and return.
-						Exo.Node[fn].apply(Exo.Node, modParams)
-					else
-						# call the class function on Node without any params.
-						Exo.Node[fn]()
-					
-			a(func)
+    @parent = ->
+      @node().parent()?.controller
 
-		# Map the Node privileged functions on our object to 
-		# an encapsulated instance of Node.
-		for func in Controller.NodePrivilegedFuncs
-			a = (fn) ->
-				# add function as a prop on the instance 'that'
-				that[fn] = (params...) ->	#WARNING: this was func before... and it worked :S
-					# call the instance function on node and return.
-					node[fn].apply(node, params)
-			a(func)
+    @siblings = ->
+      @node().siblings().map (node)-> node.controller
 
-		# We have to invert our reason when dealing with the public functions of node. 
-		# These we want to map to functions on 'that'
-		for func in Controller.NodePublicFuncs
-			a = (fn) ->
-				node[fn] = (params...) ->
-					that[fn].apply(that, params)
-			a(func)
+    #TODO: Make sure the .node function exists and throw an Exo.Incompatible object error if not.
+    @removeChild = (controller)-> @node().removeChild controller.node()
 
-			# node['beforeActivate'] = (params...) ->
-			# 	that['proxyBeforeActivate'].apply that, params
+    @isActivated = -> @node().isActivated()
+    @isTransitioning = -> @node().isTransitioning()
 
-			# node['beforeDeactivate'] = (params...) ->
-			# 	that['proxyBeforeDeactivate'].apply that, params
+  prepare: ->
 
-		# Hack hack.. make sure we always add the Controller instance and not the Node.
-		@addChild = (controller) ->
-			controller.setParent(@)
+  doActivate: ->
+    @onActivated()
 
-			node.addChild controller
-			@onChildAdded controller
+  # Todo: Only dispatch event if the call to the node was successful
+  onActivated: ->
+    @node().onActivated()
+    @trigger 'onActivated', @
+  
+  deactivate: ->
+    @onDeactivated()
 
-		delete opts.initialState if opts.initialState
-		delete opts.mode if opts.mode
-		delete opts.children if opts.children
+  doDeactivate: ->
+    @onDeactivated()
 
-		super opts
-		@prepare()
+  # Todo: Only dispatch event if the call to the node was successful
+  onDeactivated: ->
+    @node().onDeactivated()
+    @trigger 'onActivated', @
 
-	# Public
-	prepare: ->
-
-	proxyBeforeActivate: ->
-		@trigger Controller.Events.BEFORE_ACTIVATE, @
-		@beforeActivate()
-
-	beforeActivate: ->
-
-	doActivate: -> 
-	onActivated: -> 
-		@node().onActivated()
-		@trigger Controller.Events.ON_ACTIVATED, @
-
-	proxyBeforeDeactivate: ->
-		@trigger Controller.Events.BEFORE_DEACTIVATE, @
-		@beforeDeactivate()
-
-	beforeDeactivate: ->
-
-	doDeactivate: -> 
-	onDeactivated: -> 
-		@node().onDeactivated()
-		@trigger Controller.Events.ON_DEACTIVATED, @
-
-	onChildAdded: (child) ->
-	onChildActivated: (child) ->
-	onChildDeactivated: (child) ->
-
-Exo?.Spine ||= {}
-Exo?.Spine.Controller = Controller
-module?.exports = Controller
+Exo.Spine ||= {}
+Exo.Spine.Controller = Controller

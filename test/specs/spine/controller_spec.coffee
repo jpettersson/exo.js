@@ -36,7 +36,7 @@ describe "Exo.Spine.Controller as a new instance", ->
     test.removeChild(test.children()[0])
     expect(test.children().length).to.equal 4
 
-describe 'Exo.Spine.Controller as a child', ->
+describe 'Exo.Spine.Controller as a child and sibling', ->
   p = test = s = null
 
   beforeEach ->
@@ -47,67 +47,74 @@ describe 'Exo.Spine.Controller as a child', ->
     p.addChild test
     p.addChild s
 
+  it "should be able to access it's parent", ->
+    expect(test.parent()).to.be.an('object')
+
   it "should be able to activate it's parent", ->
     test.activate()
     expect(test.isActivated() and p.isActivated()).to.equal true
+
+  it "should be able to acces it's sibling", ->
+    expect(test.siblings()).to.be.an('array')
+    expect(test.siblings().length).to.equal 1
 
   it "should be able to activate by deactivating it's sibling", ->
     s.activate()
     test.activate()
     expect(test.isActivated() and p.isActivated() and not s.isActivated()).to.equal true
 
-describe "Exo.Spine.Controller as a parent and child", ->
-  p = c = test = null
+# describe "Exo.Spine.Controller as a parent and child", ->
+#   p = c = test = null
 
-  beforeEach ->
-    p = new Exo.Spine.Controller
-    c = new Exo.Spine.Controller
-    test = new Exo.Spine.Controller
+#   beforeEach ->
+#     p = new Exo.Spine.Controller
+#     c = new Exo.Spine.Controller
+#     test = new Exo.Spine.Controller
 
-    p.addChild test
-    test.addChild c
+#     p.addChild test
+#     test.addChild c
 
-  it 'should have a blocked lineage if a parent or child is transitioning', ->
-    # Parent
-    p.doActivate = c.doActivate = -> null
-    p.activate()
-    expect(Node.lineageIsBusy(test)).to.equal true
-    p.onActivated()
-    expect(Node.lineageIsBusy(test)).to.equal false
-    # Child
-    c.activate()
-    expect(Node.lineageIsBusy(test)).to.equal true
-    c.onActivated()
-    expect(Node.lineageIsBusy(test)).to.equal false
+#   it 'should have a blocked lineage if a parent or child is transitioning', ->
+#     # Parent
+#     p.doActivate = c.doActivate = -> null
+#     p.activate()
+#     expect(Node.lineageIsBusy(test)).to.equal true
+#     p.onActivated()
+#     expect(Node.lineageIsBusy(test)).to.equal false
+#     # Child
+#     c.activate()
+#     expect(Node.lineageIsBusy(test)).to.equal true
+#     c.onActivated()
+#     expect(Node.lineageIsBusy(test)).to.equal false
 
-  it 'should have an activated child if a child is activated', ->
-    c.activate()
-    expect(test.activatedChildren().length).to.equal 1
+#   it 'should have an activated child if a child is activated', ->
+#     c.activate()
+#     expect(test.activatedChildren().length).to.equal 1
 
-  it 'should only have one activated child at any time when mode = Mode.EXCLUSIVE', ->
-    c1 = new Exo.Spine.Controller
-    c2 = new Exo.Spine.Controller
+#   it 'should only have one activated child at any time when mode = Mode.EXCLUSIVE', ->
+#     c1 = new Exo.Spine.Controller
+#     c2 = new Exo.Spine.Controller
 
-    test.addChild c1
-    test.addChild c2
+#     test.addChild c1
+#     test.addChild c2
 
-    c.activate()
-    c1.activate()
-    c2.activate()
+#     c.activate()
+#     c1.activate()
+#     c2.activate()
 
-    expect(c2.isActivated() and not c.isActivated() and not c1.isActivated()).to.equal true
+#     expect(c2.isActivated() and not c.isActivated() and not c1.isActivated()).to.equal true
 
-  it 'should allow multiple activated children when mode = Mode.MULTI', ->
-    test.setMode Node.Modes.MULTI
+#   it 'should allow multiple activated children when mode = Mode.MULTI', ->
+#     test.setMode Node.Modes.MULTI
     
-    c1 = new Exo.Spine.Controller
-    c2 = new Exo.Spine.Controller
+#     c1 = new Exo.Spine.Controller
+#     c2 = new Exo.Spine.Controller
 
-    test.addChild c1
-    test.addChild c2
+#     test.addChild c1
+#     test.addChild c2
 
-    c.activate()
-    c1.activate()
-    c2.activate()
+#     c.activate()
+#     c1.activate()
+#     c2.activate()
 
-    expect(c.isActivated() and c1.isActivated() and c2.isActivated()).to.equal true
+#     expect(c.isActivated() and c1.isActivated() and c2.isActivated()).to.equal true

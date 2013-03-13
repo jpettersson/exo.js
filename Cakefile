@@ -29,7 +29,6 @@ SPEC_PACKAGES = [
     files: [
       'test/specs/state_machine_spec.coffee'
       'test/specs/node_spec.coffee'
-      'test/specs/spine/controller_spec.coffee'
     ]
   },
   {
@@ -65,7 +64,7 @@ build = (packages, callback) ->
 
 test = ->
   mochaCmd = 'mocha-phantomjs' + if process.platform is 'win32' then '.cmd' else ''
-  args = ['-R', 'json', 'test/test.html']
+  args = ['-R', 'dot', 'test/test.html']
   
   console.log mochaCmd, args.join ' '
   spawn mochaCmd, args, {stdio: "inherit"}

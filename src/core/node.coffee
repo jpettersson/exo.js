@@ -90,7 +90,10 @@ class Node
     parent = null
     __childMap = {}
   
-    @id = "exo##{Node.nextId()}"
+    id = "exo##{Node.nextId()}"
+
+    @nodeId = ->
+      id
 
     # Did we receive an array of children from the opts hash?
     if opts.children
@@ -161,11 +164,11 @@ class Node
 
     @addChild = (node) ->
       node.setParent(@)
-      __childMap[node.id] = node
+      __childMap[node.nodeId()] = node
       #console.log "addChild:", node.id, __childMap[node.id] 
       
     @removeChild = (node) ->
-      delete __childMap[node.id]
+      delete __childMap[node.nodeId()]
     
     @children = ->
       @childrenAsArray()
@@ -188,8 +191,10 @@ class Node
           return descendant
 
     @siblings = () ->
+      ownId = @nodeId()
+
       if parent
-        return parent.children().filter (n)-> n isnt @
+        return parent.children().filter (n)-> n.nodeId() isnt ownId
 
       return []
 
