@@ -163,9 +163,17 @@ class Node
       return arr
 
     @addChild = (node) ->
+
+      throw new Error(
+        "ExoReferenceError -> addChild: #{node} is not a valid Exo.Node"
+      ) if node == null or typeof node == 'undefined'
+
+      throw new Error(
+        "ExoReferenceError -> An Exo.Node instance can't pass itself to addChild"
+      ) if @nodeId() == node.nodeId()
+
       node.setParent(@)
       __childMap[node.nodeId()] = node
-      #console.log "addChild:", node.id, __childMap[node.id] 
       
     @removeChild = (node) ->
       delete __childMap[node.nodeId()]
