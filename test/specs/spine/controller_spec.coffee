@@ -36,6 +36,8 @@ describe "Exo.Spine.Controller as a new instance", ->
     test.removeChild(test.children()[0])
     expect(test.children().length).to.equal 4
 
+  it 'should throw "Exo: Incompatible object" when invalid objects are passed to node.addChild'
+
   it 'should trigger "onActivated" and pass itself when activated', (done)->
     test.bind 'onActivated', (controller)->
       expect(controller.nodeId()).to.equal test.nodeId()
