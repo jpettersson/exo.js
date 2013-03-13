@@ -16,7 +16,7 @@ class Controller extends Spine.Controller
       _node
 
     @nodeId = -> @node().nodeId()
-    @setId = (id)-> @node.setId(id)
+    @setNodeId = (id)-> @node().setNodeId(id)
     @setMode = (mode)-> @node().setMode(mode)
 
     @activate = -> 
@@ -45,7 +45,7 @@ class Controller extends Spine.Controller
 
     # TODO: Make sure the node function exists and throw an Exo.Incompatible 
     # object error if not.
-    @addChild = (controller)-> @node().addChild controller.node()
+    @addChild = (controller)-> @node().addChild controller?.node()
     
     @children = ->
       @node().children().map (node)-> node.controller
