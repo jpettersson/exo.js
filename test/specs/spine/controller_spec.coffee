@@ -1,5 +1,5 @@
 describe "Exo.Spine.Controller at instantiation", ->
-  it 'prepare is called', (done)->
+  it 'should call prepare', (done)->
     called = false
     class Test extends Exo.Spine.Controller
       prepare: ->
