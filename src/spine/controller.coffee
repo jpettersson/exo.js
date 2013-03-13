@@ -3,12 +3,12 @@ Spine = @Spine or require('spine')
 class Controller extends Spine.Controller
 
   constructor: (opts={})->
-    super
+    nodeOpts = opts
 
     _node = null
     @node = ->
       unless _node
-        _node = new Exo.Node opts
+        _node = new Exo.Node nodeOpts
 
         # Store a reference of this to substitute
         # in outgoing events/function calls.
@@ -72,6 +72,15 @@ class Controller extends Spine.Controller
 
     @isBusy = ->
       @node().isBusy()
+
+    # Clean up options before we send them to 
+    # Spine.
+    delete opts.initialState if opts.initialState
+    delete opts.mode if opts.mode
+    delete opts.children if opts.children
+
+    super opts
+    @prepare()
 
   prepare: ->
 

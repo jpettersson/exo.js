@@ -1,3 +1,14 @@
+describe "Exo.Spine.Controller at instantiation", ->
+  it 'prepare is called', (done)->
+    called = false
+    class Test extends Exo.Spine.Controller
+      prepare: ->
+        called = true
+        expect(called).to.equal true
+        done()
+
+    new Test()
+
 describe "Exo.Spine.Controller as a new instance", ->
   test = null
 
