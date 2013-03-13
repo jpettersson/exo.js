@@ -53,6 +53,12 @@ class Controller extends Spine.Controller
     @parent = ->
       @node().parent()?.controller
 
+    @childById = (id)->
+      @node().childById(id)?.controller
+
+    @descendantById = (id)->
+      @node().descendantById(id)?.controller
+
     @siblings = ->
       @node().siblings().map (node)-> node.controller
 
