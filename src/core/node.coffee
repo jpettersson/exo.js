@@ -31,6 +31,7 @@ class Node
               transition: Node.Transitions.ACTIVATE
             return Node.deactivate sibling
       else
+        return false unless parent.childrenCanActivate()
         parent.setOnActivatedAction
           node: node
           transition: Node.Transitions.ACTIVATE
@@ -105,6 +106,13 @@ class Node
     mode = opts.mode ||= Node.Modes.EXCLUSIVE
     initialState = opts.initialState ||= Node.States.DEACTIVATED
 
+    # By default children automatically activate their parents 
+    # if they are not activated.
+    if opts.childrenCanActivate == false
+      childrenCanActivate = false
+    else
+      childrenCanActivate = true
+
     onActivatedAction = null
     onDeactivatedAction = null
 
@@ -143,6 +151,10 @@ class Node
 
     @onDeactivatedAction = ->
       onDeactivatedAction
+
+    # Refactor the options into a common getter?
+    @childrenCanActivate = ->
+      childrenCanActivate
 
     @setMode = (m) ->
       mode = m
