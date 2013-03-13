@@ -17,13 +17,28 @@ class Controller extends Spine.Controller
 
     @nodeId = -> @node().id
     @setId = (id)-> @node.setId(id)
+    @setMode = (mode)-> @node().setMode(mode)
 
-    @activate = -> @node().activate()
-    @deactivate = -> @node().deactivate()
-    @toggle = -> @node().toggle()
+    @activate = -> 
+      @node().activate()
+    
+    @deactivate = -> 
+      @node().deactivate()
+    
+    @toggle = -> 
+      @node().toggle()
 
-    #TODO: Make sure the node function exists and throw an Exo.Incompatible object error if not.
+    # Delegate the transitions to this object.
+    @node().doActivate = =>
+      @doActivate()
+
+    @node().doDectivate = =>
+      @doDectivate()
+
+    # TODO: Make sure the node function exists and throw an Exo.Incompatible 
+    # object error if not.
     @addChild = (controller)-> @node().addChild controller.node()
+    
     @children = ->
       @node().children().map (node)-> node.controller
 
@@ -33,11 +48,22 @@ class Controller extends Spine.Controller
     @siblings = ->
       @node().siblings().map (node)-> node.controller
 
-    #TODO: Make sure the .node function exists and throw an Exo.Incompatible object error if not.
-    @removeChild = (controller)-> @node().removeChild controller.node()
+    @activatedChildren = ->
+      @node().activatedChildren()
 
-    @isActivated = -> @node().isActivated()
-    @isTransitioning = -> @node().isTransitioning()
+    # TODO: Make sure the .node function exists and throw an Exo.Incompatible 
+    # object error if not.
+    @removeChild = (controller)-> 
+      @node().removeChild controller.node()
+
+    @isActivated = -> 
+      @node().isActivated()
+    
+    @isTransitioning = -> 
+      @node().isTransitioning()
+
+    @isBusy = ->
+      @node().isBusy()
 
   prepare: ->
 
@@ -48,9 +74,6 @@ class Controller extends Spine.Controller
   onActivated: ->
     @node().onActivated()
     @trigger 'onActivated', @
-  
-  deactivate: ->
-    @onDeactivated()
 
   doDeactivate: ->
     @onDeactivated()
