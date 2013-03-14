@@ -43,6 +43,14 @@ class Controller extends Spine.Controller
     @node().doDeactivate = =>
       @doDeactivate()
 
+    @node().onChildActivated = (node)=>
+      @trigger 'onChildActivated', node.controller
+      @onChildActivated? node.controller
+
+    @node().onChildDeactivated = (node)=>
+      @trigger 'onChildDeactivated', node.controller
+      @onChildDeactivated? node.controller
+
     # TODO: Make sure the node function exists and throw an Exo.Incompatible 
     # object error if not.
     @addChild = (controller)-> @node().addChild controller?.node()
@@ -78,6 +86,9 @@ class Controller extends Spine.Controller
 
     @isBusy = ->
       @node().isBusy()
+
+    @haveBusyChildren = ->
+      @node().haveBusyChildren()
 
     # Clean up options before we send them to 
     # Spine.
