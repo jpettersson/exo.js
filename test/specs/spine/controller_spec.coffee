@@ -77,6 +77,18 @@ describe "Exo.Spine.Controller as a new instance", ->
     expect(c.isActivated()).to.equal false
     expect(test.isActivated()).to.equal false
 
+  it "should allow a child to activate if it's activated and opts.childrenCanActivate = false", ->
+    test = new Exo.Spine.Controller
+      childrenCanActivate: false
+
+    c = new Exo.Spine.Controller
+    test.addChild c
+    test.activate()
+    c.activate()
+
+    expect(c.isActivated()).to.equal true
+    expect(test.isActivated()).to.equal true
+
   it 'should throw "Exo: Incompatible object" when invalid objects are passed to node.addChild'
 
   it 'should trigger "onActivated" and pass itself when activated', (done)->
