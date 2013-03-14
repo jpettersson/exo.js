@@ -113,3 +113,21 @@ describe "Node as a parent and child", ->
     c2.activate()
 
     expect(c.isActivated() and c1.isActivated() and c2.isActivated()).to.equal true
+
+  it 'should report haveBusyChildren = true when mode = Mode.MULTI and children are transitioning', ->
+    test.setMode Node.Modes.MULTI
+
+    c1 = new Node
+    c2 = new Node
+    c1.doActivate = c2.doActivate = ->
+
+    test.addChild c1
+    test.addChild c2
+
+    c1.activate()
+    c2.activate()
+
+    expect(test.haveBusyChildren()).to.equal true
+    expect(test.isTransitioning()).to.equal false
+    expect(test.isBusy()).to.equal false
+

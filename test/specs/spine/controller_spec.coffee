@@ -211,3 +211,24 @@ describe "Exo.Spine.Controller as a parent and child", ->
     c2.activate()
 
     expect(c.isActivated() and c1.isActivated() and c2.isActivated()).to.equal true
+
+  it 'should trigger onChildActivated & onChildDeactivated when cycling a child', (done)->
+    counter = (total)->
+      pos=0
+      -> 
+        pos++
+        done() if pos >= total
+
+    count = counter(2)
+    
+    test.bind 'onChildActivated', (controller)->
+      expect(controller.nodeId()).to.equal c.nodeId()
+      count()
+
+    test.bind 'onChildDeactivated', (controller)->
+      expect(controller.nodeId()).to.equal c.nodeId()
+      count()
+
+    c.activate()
+    c.deactivate()
+
