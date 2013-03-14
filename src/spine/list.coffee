@@ -30,6 +30,7 @@ class List extends Exo.Spine.Controller
 
 		@deactivateAndKillOrphans(@children(), collection)
 
+		console.log "Render controllers at: #{@nodeId()}"
 		for item, i in collection
 			child = @getOrCreateChild item, controllers[item.constructor.className] or controllers.default
 
@@ -43,7 +44,8 @@ class List extends Exo.Spine.Controller
 		child = @childById(item.constructor.className + item.id)
 		unless child
 			child = new controller
-			child.id = item.constructor.className + item.id
+			child.setNodeId item.constructor.className + item.id
+			console.log "getOrCreateChild at: #{@nodeId()}"
 			@addChild child
 			child.prepareWithModel item
 			@append child
