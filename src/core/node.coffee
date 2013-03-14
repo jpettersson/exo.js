@@ -237,6 +237,9 @@ class Node
 
       return false
 
+    @haveBusyChildren = ->
+      @children().filter((n) -> n.isBusy()).length > 0
+
     @attemptTransition = (t) ->
       @sm().attemptTransition t
 
