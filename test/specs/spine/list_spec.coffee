@@ -1,29 +1,35 @@
 describe "Exo.Spine.List as a new instance", ->
-  # Fish = FishController = list = null
+  Fish = FishController = list = null
 
-  # beforeEach -> 
-  #   class Fish extends Exo.Spine.Model
-  #     @configure "Fish", "species"
+  class Fish extends Exo.Spine.Model
+    @configure "Fish", "species"
 
-  #   class FishController extends Exo.Spine.Controller
-  #     prepareWithModel: (fish)->
-  #       @fish = fish
-  #       @render()
+  Fish.create({species: 'Minnow'})
+  Fish.create({species: 'Fugu'})
+  Fish.create({species: 'Tucuxi'})
 
-  #     render: ->
-  #       @html "<div>#{@fish.name}</div>"
+  class FishController extends Exo.Spine.Controller
+    prepareWithModel: (fish)->
+      @fish = fish
+      @render()
 
-  #   list = new Exo.Spine.List
-  #     controller: FishController
+    render: ->
+      @html "<div>#{@fish.species}</div>"
 
-  #   $('body').append list
+  beforeEach -> 
+    list = new Exo.Spine.List
+      controller: FishController
+    $('body').append list
 
-  # it "can render controllers", ->
-  #   Fish.create({name: 'Minnow'})
-  #   Fish.create({name: 'Fugu'})
-  #   Fish.create({name: 'Tucuxi'})
+  it "can render controllers", ->
+    list.render Fish.all()
+    expect(list.el[0].innerText).to.equal 'MinnowFuguTucuxi'
 
-  #   list.render Fish.all()
+  it "has consistent children after multiple render calls", ->
+    list.render Fish.all()
+    expect(list.children().length).to.equal 3
+    list.render Fish.all()
+    expect(list.children().length).to.equal 3
 
-    #console.log $(list.el)
-    #expect(list.el)
+    for child in list.children()
+      expect(child.children().length).to.equal 0
