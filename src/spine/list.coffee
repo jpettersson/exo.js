@@ -55,7 +55,7 @@ class List extends Exo.Spine.Controller
 
 	# Find children that have been deleted from the collection. Deactivate them, remove them from the DOM and make them available for GC.
 	deactivateAndKillOrphans: (children, collection) ->
-		orphans = children.filter (child) -> child.id not in collection.map (item) -> item.constructor.className + item.id
+		orphans = children.filter (child) -> child.nodeId() not in collection.map (item) -> item.constructor.className + item.id
 		for orphan in orphans
 			if orphan.isActivated() and not orphan.isBusy()
 				orphan.bind 'onDeactivated', (controller) =>
