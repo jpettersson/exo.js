@@ -145,3 +145,11 @@ describe "Node as a parent and child", ->
     test.addChild theDefault
     test.setDefaultChild theDefault
     expect(test.defaultChild().nodeId()).to.equal theDefault.nodeId()
+
+  it 'should allow children to change nodeId', ->
+    expect(test.childById( c.nodeId() ).nodeId() ).to.equal c.nodeId()
+    c.setNodeId('banana')
+    expect(test.childById('banana').nodeId()).to.equal 'banana'
+
+
+

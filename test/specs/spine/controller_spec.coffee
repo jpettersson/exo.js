@@ -246,3 +246,12 @@ describe "Exo.Spine.Controller as a parent and child", ->
     test.addChild theDefault
     test.setDefaultChild theDefault
     expect(test.defaultChild().nodeId()).to.equal theDefault.nodeId()
+
+  it 'is able to retrieve child by id', ->
+    expect(test.childById(c.nodeId()).nodeId()).to.equal c.nodeId()
+
+  it 'should allow children to change nodeId', ->
+    expect(test.childById( c.nodeId() ).nodeId() ).to.equal c.nodeId()
+    c.setNodeId('banana')
+    expect(test.childById('banana').nodeId()).to.equal 'banana'
+
