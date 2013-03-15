@@ -199,7 +199,7 @@ describe "Exo.Spine.Controller as a parent and child", ->
 
   it 'should allow multiple activated children when mode = Mode.MULTI', ->
     test.setMode Exo.Node.Modes.MULTI
-    
+
     c1 = new Exo.Spine.Controller
     c2 = new Exo.Spine.Controller
 
@@ -215,12 +215,12 @@ describe "Exo.Spine.Controller as a parent and child", ->
   it 'should trigger onChildActivated & onChildDeactivated when cycling a child', (done)->
     counter = (total)->
       pos=0
-      -> 
+      ->
         pos++
         done() if pos >= total
 
     count = counter(2)
-    
+
     test.bind 'onChildActivated', (controller)->
       expect(controller.nodeId()).to.equal c.nodeId()
       count()
@@ -232,3 +232,17 @@ describe "Exo.Spine.Controller as a parent and child", ->
     c.activate()
     c.deactivate()
 
+  it 'should activate the default child after its siblings deactivate', ->
+    theDefault = new Exo.Spine.Controller
+    test.addChild theDefault
+    test.setDefaultChild theDefault
+    c.activate()
+    c.deactivate()
+
+    expect(theDefault.isActivated()).to.equal true
+
+  it 'should be able to get the default child', ->
+    theDefault = new Exo.Spine.Controller
+    test.addChild theDefault
+    test.setDefaultChild theDefault
+    expect(test.defaultChild().nodeId()).to.equal theDefault.nodeId()

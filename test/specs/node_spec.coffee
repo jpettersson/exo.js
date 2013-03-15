@@ -88,7 +88,7 @@ describe "Node as a parent and child", ->
 
   it 'should only have one activated child at any time when mode = Mode.EXCLUSIVE', ->
     c1 = new Node
-    c2 = new Node 
+    c2 = new Node
 
     test.addChild c1
     test.addChild c2
@@ -101,7 +101,7 @@ describe "Node as a parent and child", ->
 
   it 'should allow multiple activated children when mode = Mode.MULTI', ->
     test.setMode Node.Modes.MULTI
-    
+
     c1 = new Node
     c2 = new Node
 
@@ -133,13 +133,15 @@ describe "Node as a parent and child", ->
 
   it 'should activate the default child after its siblings deactivate', ->
     theDefault = new Node
-    test.addChild theDefault, {default: true}
+    test.addChild theDefault
+    test.setDefaultChild theDefault
     c.activate()
     c.deactivate()
 
     expect(theDefault.isActivated()).to.equal true
 
-  it 'should be possible to get the default child', ->
+  it 'should be able to get the default child', ->
     theDefault = new Node
-    test.addChild theDefault, {default: true}
+    test.addChild theDefault
+    test.setDefaultChild theDefault
     expect(test.defaultChild().nodeId()).to.equal theDefault.nodeId()

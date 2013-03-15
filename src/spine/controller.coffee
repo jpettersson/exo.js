@@ -6,6 +6,7 @@ class Controller extends Spine.Controller
     nodeOpts = opts
 
     _node = null
+
     @node = ->
       unless _node
         _node = new Exo.Node nodeOpts
@@ -19,13 +20,13 @@ class Controller extends Spine.Controller
     @setNodeId = (id)-> @node().setNodeId(id)
     @setMode = (mode)-> @node().setMode(mode)
 
-    @activate = -> 
+    @activate = ->
       @node().activate()
-    
-    @deactivate = -> 
+
+    @deactivate = ->
       @node().deactivate()
-    
-    @toggle = -> 
+
+    @toggle = ->
       @node().toggle()
 
     # Delegate the transitions to this object.
@@ -51,10 +52,10 @@ class Controller extends Spine.Controller
       @trigger 'onChildDeactivated', node.controller
       @onChildDeactivated? node.controller
 
-    # TODO: Make sure the node function exists and throw an Exo.Incompatible 
+    # TODO: Make sure the node function exists and throw an Exo.Incompatible
     # object error if not.
     @addChild = (controller)-> @node().addChild controller?.node()
-    
+
     @children = ->
       @node().children().map (node)-> node.controller
 
@@ -73,15 +74,21 @@ class Controller extends Spine.Controller
     @activatedChildren = ->
       @node().activatedChildren()
 
-    # TODO: Make sure the .node function exists and throw an Exo.Incompatible 
+    # TODO: Make sure the .node function exists and throw an Exo.Incompatible
     # object error if not.
-    @removeChild = (controller)-> 
+    @removeChild = (controller)->
       @node().removeChild controller.node()
 
-    @isActivated = -> 
+    @setDefaultChild = (controller) ->
+      @node().setDefaultChild controller.node()
+
+    @defaultChild = ->
+      @node().defaultChild()
+
+    @isActivated = ->
       @node().isActivated()
-    
-    @isTransitioning = -> 
+
+    @isTransitioning = ->
       @node().isTransitioning()
 
     @isBusy = ->
@@ -90,7 +97,7 @@ class Controller extends Spine.Controller
     @haveBusyChildren = ->
       @node().haveBusyChildren()
 
-    # Clean up options before we send them to 
+    # Clean up options before we send them to
     # Spine.
     delete opts.initialState if opts.initialState
     delete opts.mode if opts.mode

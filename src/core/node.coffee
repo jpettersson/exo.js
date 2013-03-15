@@ -78,6 +78,8 @@ class Node
     node.parent().onChildDeactivated(node) if node.parent()
     if action = node.onDeactivatedAction()
       @processAction action
+    else if node.parent()?.defaultChild()
+      Node.activate node.parent().defaultChild()
 
   @processAction: (action) ->
     if action.transition == Node.Transitions.ACTIVATE
@@ -86,11 +88,11 @@ class Node
         @deactivate(action.node)
 
   # Instance functions
-  
+
   constructor: (opts={})->
     parent = null
     __childMap = {}
-  
+    __defaultChild = null
     __nId = "exo##{Node.nextId()}"
 
     @nodeId = ->
@@ -109,7 +111,7 @@ class Node
     mode = opts.mode ||= Node.Modes.EXCLUSIVE
     initialState = opts.initialState ||= Node.States.DEACTIVATED
 
-    # By default children automatically activate their parents 
+    # By default children automatically activate their parents
     # if they are not activated.
     if opts.childrenCanActivate == false
       childrenCanActivate = false
@@ -129,11 +131,11 @@ class Node
           activate:
             from: Node.States.DEACTIVATED
             to: Node.States.ACTIVATED
-          deactivate: 
+          deactivate:
             from: Node.States.ACTIVATED
             to: Node.States.DEACTIVATED
 
-    # Add a callback lambda to the SM and map the two  
+    # Add a callback lambda to the SM and map the two
     # state transitions to methods in this class.
     @sm().performTransition = (t) =>
       if t == Node.Transitions.ACTIVATE
@@ -189,10 +191,16 @@ class Node
 
       node.setParent(@)
       __childMap[node.nodeId()] = node
-      
+
     @removeChild = (node) ->
       delete __childMap[node.nodeId()]
-    
+
+    @setDefaultChild = (node) ->
+      __defaultChild = node
+
+    @defaultChild = ->
+      __defaultChild
+
     @children = ->
       @childrenAsArray()
 
@@ -205,7 +213,7 @@ class Node
 
     @descendantById = (id) ->
       child = @childById(id)
-      if child 
+      if child
         return child
 
       for child in children
@@ -223,13 +231,13 @@ class Node
 
     @isActivated = ->
       @sm().currentState() == Node.States.ACTIVATED
-    
+
     @isTransitioning = ->
       @sm().isTransitioning()
-      
+
     @isBusy = ->
       return true if @isTransitioning()
-  
+
       if @mode() == Node.Modes.EXCLUSIVE
         # Why was this in here? It didn't work.. check old implementation!
         # return true if @onActivatedAction() != null or @onDeactivatedAction() != null
@@ -246,7 +254,7 @@ class Node
     @activate = -> Node.activate @
     @deactivate = -> Node.deactivate @
     @toggle = -> Node.toggle @
-    
+
     # TODO
     @deactivateChildren = ->
       for child in @children()
