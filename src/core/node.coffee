@@ -99,6 +99,7 @@ class Node
       __nId
 
     @setNodeId = (nid)->
+      parent?.onChildIdUpdated __nId, nid, @
       __nId = nid
 
     # Did we receive an array of children from the opts hash?
@@ -144,6 +145,10 @@ class Node
       else if t == Node.Transitions.DEACTIVATE
         @beforeDeactivate()
         @doDeactivate()
+
+    @onChildIdUpdated = (oldId, newId, child)->
+      delete __childMap[oldId]
+      __childMap[newId] = child
 
     @setOnActivatedAction = (action) ->
       onActivatedAction = action
