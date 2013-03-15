@@ -11,12 +11,12 @@ class List extends Exo.Spine.Controller
 	controllerFor: (controllers, item) ->
 		controllers[item.className]
 
-	render:(collection) ->
+	render:(collection, opts={}) ->
 		@collection = collection
 		if @template || @templates
 			@renderTemplates(collection) 
 		else if @controller || @controllers
-			@renderControllers collection
+			@renderControllers collection, opts
 
 	renderTemplates: (collection) ->
 		templates = @templates || {default: @template}
@@ -25,13 +25,14 @@ class List extends Exo.Spine.Controller
 			el = $(html).appendTo(@el)
 			$(el).data('item', item)
 
-	renderControllers: (collection) ->
+	renderControllers: (collection, opts) ->
 		controllers = @controllers || {default: @controller}
 
 		@deactivateAndKillOrphans(@children(), collection)
 
+		#console.log "Render controllers at: #{@nodeId()}"
 		for item, i in collection
-			child = @getOrCreateChild item, controllers[item.constructor.className] or controllers.default
+			child = @getOrCreateChild(item, controllers[item.constructor.className] or controllers.default, opts)
 
 			child.listIndex = i
 			child.moveTo i if child.moveTo
@@ -39,11 +40,12 @@ class List extends Exo.Spine.Controller
 
 		@trigger 'afterRender', @
 
-	getOrCreateChild: (item, controller) ->
+	getOrCreateChild: (item, controller, opts) ->
 		child = @childById(item.constructor.className + item.id)
 		unless child
-			child = new controller
-			child.id = item.constructor.className + item.id
+			child = new controller(opts)
+			child.setNodeId item.constructor.className + item.id
+			#console.log "getOrCreateChild at: #{@nodeId()}"
 			@addChild child
 			child.prepareWithModel item
 			@append child

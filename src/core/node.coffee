@@ -91,13 +91,13 @@ class Node
     parent = null
     __childMap = {}
   
-    id = "exo##{Node.nextId()}"
+    __nId = "exo##{Node.nextId()}"
 
     @nodeId = ->
-      id
+      __nId
 
     @setNodeId = (nid)->
-      id = nid
+      __nId = nid
 
     # Did we receive an array of children from the opts hash?
     if opts.children
