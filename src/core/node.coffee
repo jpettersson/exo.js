@@ -213,7 +213,6 @@ class Node
       @children().filter (n) -> n.isActivated()
 
     @childById = (id) ->
-      #console.log "childById:", id, __childMap[id]
       __childMap[id]
 
     @descendantById = (id) ->
