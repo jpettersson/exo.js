@@ -131,3 +131,15 @@ describe "Node as a parent and child", ->
     expect(test.isTransitioning()).to.equal false
     expect(test.isBusy()).to.equal false
 
+  it 'should activate the default child after its siblings deactivate', ->
+    theDefault = new Node
+    test.addChild theDefault, {default: true}
+    c.activate()
+    c.deactivate()
+
+    expect(theDefault.isActivated()).to.equal true
+
+  it 'should be possible to get the default child', ->
+    theDefault = new Node
+    test.addChild theDefault, {default: true}
+    expect(test.defaultChild().nodeId()).to.equal theDefault.nodeId()
