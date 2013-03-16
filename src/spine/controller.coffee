@@ -29,6 +29,9 @@ class Controller extends Spine.Controller
     @toggle = ->
       @node().toggle()
 
+    @deactivateChildren = ->
+      @node().deactivateChildren()
+
     # Delegate the transitions to this object.
     @node().beforeActivate = =>
       @trigger 'beforeActivate', @
