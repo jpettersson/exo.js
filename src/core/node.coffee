@@ -1,11 +1,11 @@
+### 
+Overview of a node
+
+The Class Methods are used internally by the framework.
+###
 class Node
 
   @__currentId = 0
-
-  @nextId: ->
-    Node.__currentId = Node.__currentId + 1
-
-    return Node.__currentId
 
   @Transitions:
     ACTIVATE: 'activate'
@@ -19,6 +19,18 @@ class Node
     EXCLUSIVE: 'exclusive'
     MULTI: 'multi'
 
+  ### 
+  Generate the next unique node ID string.
+  ###
+  @nextId: ->
+    Node.__currentId = Node.__currentId + 1
+
+    return Node.__currentId
+
+  ### 
+  Attempt to activate a node instance.
+  @param [Node] node
+  ###
   @activate: (node) ->
     return false if @lineageIsBusy(node) or node.isActivated()
 
@@ -39,6 +51,10 @@ class Node
 
     node.attemptTransition Node.Transitions.ACTIVATE
 
+  ### 
+  Attempt to deactivate a node instance.
+  @param [Node] node
+  ###
   @deactivate: (node) ->
     if node.isActivated() and not @lineageIsBusy(node)
       if node.mode() == Node.Modes.EXCLUSIVE
@@ -56,12 +72,20 @@ class Node
 
     false
 
+  ### 
+  Attempts to perform activation if the node is deactivated and vice versa.
+  @param [Node] node
+  ###
   @toggle: (node) ->
     if node.isActivated()
       return @deactivate node
     else
       return @activate node
 
+  ### 
+  Find out if the lineage of a node is busy. This will be true if a parent, sibling or child is currently transitioning.
+  @param [Node] node
+  ###
   @lineageIsBusy: (node)->
     if parent = node.parent()
       return true if parent.isBusy()
@@ -69,11 +93,19 @@ class Node
         return true if parent.isBusy()
     false
 
+  ### 
+  Node instances call this function when done activating. If there is a pending action it will be executed.
+  @param [Node] node
+  ###
   @onNodeActivated: (node)->
     node.parent().onChildActivated(node) if node.parent()
     if action = node.onActivatedAction()
       @processAction action
 
+  ### 
+  Node instances call this function when done deactivating. If there is a pending action it will be executed.
+  @param [Node] node
+  ###
   @onNodeDeactivated: (node)->
     node.parent().onChildDeactivated(node) if node.parent()
     if action = node.onDeactivatedAction()
@@ -81,64 +113,68 @@ class Node
     else if node.parent()?.defaultChild()
       Node.activate node.parent().defaultChild()
 
+  ### 
+  Process an action of activating or deactivating a node reference.
+  @param [Object] action
+  ###
   @processAction: (action) ->
     if action.transition == Node.Transitions.ACTIVATE
         @activate(action.node)
       else if action.transition == Node.Transitions.DEACTIVATE
         @deactivate(action.node)
 
-  # Instance functions
-
+  ### 
+  Constructor
+  @param [Object] options
+  @option options [Array] children add children at instantiation.
+  ###
   constructor: (opts={})->
-    parent = null
-    __childMap = {}
-    __defaultChild = null
-    __nId = "exo##{Node.nextId()}"
+    @_parent = null
+    @_childMap = {}
+    @_defaultChild = null
+    @_nId = "exo##{Node.nextId()}"
 
-    @nodeId = ->
-      __nId
-
-    @setNodeId = (nid)->
-      parent?.onChildIdUpdated __nId, nid, @
-      __nId = nid
-
-    # Did we receive an array of children from the opts hash?
     if opts.children
       for node in opts.children
         node.setParent @
         for child in opts.children
           @addChild child
 
-    mode = opts.mode ||= Node.Modes.EXCLUSIVE
-    initialState = opts.initialState ||= Node.States.DEACTIVATED
+    @_mode = opts.mode ||= Node.Modes.EXCLUSIVE
+    @_initialState = opts.initialState ||= Node.States.DEACTIVATED
 
     # By default children automatically activate their parents
     # if they are not activated.
     if opts.childrenCanActivate == false
-      childrenCanActivate = false
+      @_childrenCanActivate = false
     else
-      childrenCanActivate = true
+      @_childrenCanActivate = true
 
-    onActivatedAction = null
-    onDeactivatedAction = null
+    @_onActivatedAction = null
+    @_onDeactivatedAction = null
 
-    # Create and return the state machine instance
-    smRef = null
-    @sm = ->
-      smRef ||= new Exo.StateMachine
-        states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
-        initialState: initialState
-        transitions:
-          activate:
-            from: Node.States.DEACTIVATED
-            to: Node.States.ACTIVATED
-          deactivate:
-            from: Node.States.ACTIVATED
-            to: Node.States.DEACTIVATED
+  nodeId: ->
+    @_nId
 
-    # Add a callback lambda to the SM and map the two
-    # state transitions to methods in this class.
-    @sm().performTransition = (t) =>
+  setNodeId: (nid)->
+    @_parent?.onChildIdUpdated @_nId, nid, @
+    @_nId = nid
+
+  sm: ->
+    return @_smRef if @_smRef
+
+    @_smRef = new Exo.StateMachine
+      states: [Node.States.DEACTIVATED, Node.States.ACTIVATED]
+      initialState: @_initialState
+      transitions:
+        activate:
+          from: Node.States.DEACTIVATED
+          to: Node.States.ACTIVATED
+        deactivate:
+          from: Node.States.ACTIVATED
+          to: Node.States.DEACTIVATED
+
+    @_smRef.performTransition = (t) =>
       if t == Node.Transitions.ACTIVATE
         @beforeActivate()
         @doActivate()
@@ -146,133 +182,137 @@ class Node
         @beforeDeactivate()
         @doDeactivate()
 
-    @onChildIdUpdated = (oldId, newId, child)->
-      delete __childMap[oldId]
-      __childMap[newId] = child
+    return @_smRef
 
-    @setOnActivatedAction = (action) ->
-      onActivatedAction = action
+  onChildIdUpdated: (oldId, newId, child)->
+    delete @_childMap[oldId]
+    @_childMap[newId] = child
 
-    @onActivatedAction = ->
-      onActivatedAction
+  setOnActivatedAction: (action) ->
+    @_onActivatedAction = action
 
-    @setOnDeactivatedAction = (action) ->
-      onDeactivatedAction = action
+  onActivatedAction: ->
+    @_onActivatedAction
 
-    @onDeactivatedAction = ->
-      onDeactivatedAction
+  setOnDeactivatedAction: (action) ->
+    @_onDeactivatedAction = action
 
-    # Refactor the options into a common getter?
-    @childrenCanActivate = ->
-      childrenCanActivate
+  onDeactivatedAction: ->
+    @_onDeactivatedAction
 
-    @setMode = (m) ->
-      mode = m
+  # Refactor the options into a common getter?
+  childrenCanActivate: ->
+    @_childrenCanActivate
 
-    @mode = () ->
-      mode
+  setMode: (m) ->
+    @_mode = m
 
-    @setParent = (node) ->
-      parent = node
+  mode: () ->
+    @_mode
 
-    @parent = ->
-      parent
+  setParent: (node) ->
+    @_parent = node
 
-    @childrenAsArray = (obj) ->
-      arr = []
-      for id, child of __childMap
-        arr.push child
-      return arr
+  parent: ->
+    @_parent
 
-    @addChild = (node) ->
+  childrenAsArray: (obj) ->
+    arr = []
+    for id, child of @_childMap
+      arr.push child
+    return arr
 
-      throw new Error(
-        "ExoReferenceError -> addChild: #{node} is not a valid Exo.Node"
-      ) if node == null or typeof node == 'undefined'
+  addChild: (node) ->
 
-      throw new Error(
-        "ExoReferenceError -> An Exo.Node instance can't pass itself to addChild"
-      ) if @nodeId() == node.nodeId()
+    throw new Error(
+      "ExoReferenceError -> addChild: #{node} is not a valid Exo.Node"
+    ) if node == null or typeof node == 'undefined'
 
-      node.setParent(@)
-      __childMap[node.nodeId()] = node
+    throw new Error(
+      "ExoReferenceError -> An Exo.Node instance can't pass itself to addChild"
+    ) if @nodeId() == node.nodeId()
 
-    @removeChild = (node) ->
-      delete __childMap[node.nodeId()]
+    node.setParent(@)
+    @_childMap[node.nodeId()] = node
 
-    @setDefaultChild = (node) ->
-      __defaultChild = node
+  removeChild: (node) ->
+    delete @_childMap[node.nodeId()]
 
-    @defaultChild = ->
-      __defaultChild
+  setDefaultChild: (node) ->
+    @_defaultChild = node
 
-    @children = ->
-      @childrenAsArray()
+  defaultChild: ->
+    @_defaultChild
 
-    @activatedChildren = ->
-      @children().filter (n) -> n.isActivated()
+  children: ->
+    @childrenAsArray()
 
-    @childById = (id) ->
-      __childMap[id]
+  activatedChildren: ->
+    @children().filter (n) -> n.isActivated()
 
-    @descendantById = (id) ->
-      child = @childById(id)
-      if child
-        return child
+  childById: (id) ->
+    @_childMap[id]
 
-      for child in children
-        descendant = child.getDescendantById(id)
-        if descendant
-          return descendant
+  descendantById: (id) ->
+    child = @childById(id)
+    if child
+      return child
 
-    @siblings = () ->
-      ownId = @nodeId()
+    for child in @children()
+      descendant = child.getDescendantById(id)
+      if descendant
+        return descendant
 
-      if parent
-        return parent.children().filter (n)-> n.nodeId() isnt ownId
+  siblings: ->
+    ownId = @nodeId()
 
-      return []
+    if @parent()
+      return @parent().children().filter (n)-> n.nodeId() isnt ownId
 
-    @isActivated = ->
-      @sm().currentState() == Node.States.ACTIVATED
+    return []
 
-    @isTransitioning = ->
-      @sm().isTransitioning()
+  isActivated: ->
+    @sm().currentState() == Node.States.ACTIVATED
 
-    @isBusy = ->
-      return true if @isTransitioning()
+  isTransitioning: ->
+    @sm().isTransitioning()
 
-      if @mode() == Node.Modes.EXCLUSIVE
-        # Why was this in here? It didn't work.. check old implementation!
-        # return true if @onActivatedAction() != null or @onDeactivatedAction() != null
-        return true if @children().filter((n) -> n.isBusy()).length > 0
+  isBusy: ->
+    return true if @isTransitioning()
 
-      return false
+    if @mode() == Node.Modes.EXCLUSIVE
+      # Why was this in here? It didn't work.. check old implementation!
+      # return true if @onActivatedAction() != null or @onDeactivatedAction() != null
+      return true if @children().filter((n) -> n.isBusy()).length > 0
 
-    @haveBusyChildren = ->
-      @children().filter((n) -> n.isBusy()).length > 0
+    return false
 
-    @attemptTransition = (t) ->
-      @sm().attemptTransition t
+  haveBusyChildren: ->
+    @children().filter((n) -> n.isBusy()).length > 0
 
-    @activate = -> Node.activate @
-    @deactivate = -> Node.deactivate @
-    @toggle = -> Node.toggle @
+  attemptTransition: (t) ->
+    @sm().attemptTransition t
 
-    # TODO
-    @deactivateChildren = ->
-      for child in @children()
-        child.deactivate()
+  activate: -> Node.activate @
+  deactivate: -> Node.deactivate @
+  toggle: -> Node.toggle @
 
-    @onActivated = ->
-      @sm().onTransitionComplete()
-      Node.onNodeActivated @
-      @setOnActivatedAction null
+  # TODO
+  deactivateChildren: ->
+    for child in @children()
+      child.deactivate()
 
-    @onDeactivated = ->
-      @sm().onTransitionComplete()
-      Node.onNodeDeactivated @
-      @setOnDeactivatedAction null
+  onActivated: ->
+    @sm().onTransitionComplete()
+    Node.onNodeActivated @
+    @setOnActivatedAction null
+
+  onDeactivated: ->
+    @sm().onTransitionComplete()
+    Node.onNodeDeactivated @
+    @setOnDeactivatedAction null
+
+  # "Public functions"
 
   beforeActivate: ->
   doActivate: -> @onActivated()
