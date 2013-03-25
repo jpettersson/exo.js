@@ -18,6 +18,7 @@
     "coffee-script": "1.6.1",
     "require-dir": "0.1.0",
     "spine": "1.0.9",
-    "async": "0.2.6"
+    "async": "0.2.6",
+    "codo": "1.6.0"
   }  
 }
