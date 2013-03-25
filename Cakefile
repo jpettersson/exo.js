@@ -47,6 +47,8 @@ task 'build', 'Build project', ->
 task 'test', 'Run tests', ->
   build LIB_PACKAGES.concat(SPEC_PACKAGES),-> test()
 
+task 'doc', 'Generate documentation', ->
+  spawn 'codo', ['src/'], {stdio: "inherit"}
 
 build = (packages, callback) ->
   builder = (args...) ->
