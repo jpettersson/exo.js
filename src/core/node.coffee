@@ -127,6 +127,9 @@ class Node
   Constructor
   @param [Object] options
   @option options [Array] children add children at instantiation.
+  @option options [String] mode one of two possible operational modes: 'exclusive', 'multi'
+  @option options [String] initialState 'deactivated' or 'activated' default is 'deactivated'.
+  @option options [Boolean] childrenCanActivate If true, this node can be activated by it's children. Defaults to true.
   ###
   constructor: (opts={})->
     @_parent = null
@@ -153,13 +156,22 @@ class Node
     @_onActivatedAction = null
     @_onDeactivatedAction = null
 
+  ### 
+  Returns the id of the node. By default this is a generated unique String value.
+  ###
   nodeId: ->
     @_nId
 
+  ### 
+  Manually set the node ID. Caution: If multiple children of a node are given the same ID only one instance will persist.
+  ###
   setNodeId: (nid)->
     @_parent?.onChildIdUpdated @_nId, nid, @
     @_nId = nid
 
+  ### 
+  Returns the internal state-machine instance.
+  ###
   sm: ->
     return @_smRef if @_smRef
 
@@ -184,44 +196,75 @@ class Node
 
     return @_smRef
 
+  ### 
+  Children call this function on their parent when their node ID has been manually changed.  
+  ###
   onChildIdUpdated: (oldId, newId, child)->
     delete @_childMap[oldId]
     @_childMap[newId] = child
 
+  ### 
+  Used by the framework to chain sequences of Node activation. 
+  For instance, when activating a sibling of an already activated node this function will be called on the parent
+  with a reference to the sibling.
+  ###
   setOnActivatedAction: (action) ->
     @_onActivatedAction = action
 
+  ### 
+  A getter to read the onActivatedAction value.
+  ###
   onActivatedAction: ->
     @_onActivatedAction
 
+  ### 
+  Used by the framework to chain sequences of Node deactivation.
+  ###
   setOnDeactivatedAction: (action) ->
     @_onDeactivatedAction = action
 
+  ### 
+  Get the onDeactivatedAction value.
+  ###
   onDeactivatedAction: ->
     @_onDeactivatedAction
 
-  # Refactor the options into a common getter?
+  ### 
+  Get the childrenCanActivate setting.
+  ###
   childrenCanActivate: ->
     @_childrenCanActivate
 
+  ### 
+  Set the mode.
+  @param [String] mode
+  ###
   setMode: (m) ->
     @_mode = m
 
+  ### 
+  Get the mode.
+  ###
   mode: () ->
     @_mode
 
+  ### 
+  Set the parent Node. This is called automatically when using node.addChild
+  @param [Node] node
+  ###
   setParent: (node) ->
     @_parent = node
 
+  ### 
+  Get the parent Node.
+  ###
   parent: ->
     @_parent
 
-  childrenAsArray: (obj) ->
-    arr = []
-    for id, child of @_childMap
-      arr.push child
-    return arr
-
+  ### 
+  Add a Node instance as a child.
+  @param [Node] node
+  ###
   addChild: (node) ->
 
     throw new Error(
@@ -235,24 +278,59 @@ class Node
     node.setParent(@)
     @_childMap[node.nodeId()] = node
 
+  ### 
+  Remove a Node child from this instance.
+  @param [Node] node
+  ###
   removeChild: (node) ->
     delete @_childMap[node.nodeId()]
-
+  
+  ### 
+  Set the default child node. This node will be automatically activated when this node has activated.
+  It will also be activated when a sibling has deactivated, unless there's an onDeactivatedAction set.
+  @param [Node] node
+  ###
   setDefaultChild: (node) ->
     @_defaultChild = node
 
+  ### 
+  Get the default child Node.
+  ###
   defaultChild: ->
     @_defaultChild
 
+  ### 
+  An alias of childrenAsArray
+  ###
   children: ->
     @childrenAsArray()
 
+  ### 
+  Get the children of this node as an Array.
+  ###
+  childrenAsArray: (obj) ->
+    arr = []
+    for id, child of @_childMap
+      arr.push child
+    return arr
+
+  ### 
+  Get an Array of activated child nodes.
+  ###
   activatedChildren: ->
     @children().filter (n) -> n.isActivated()
 
+  ### 
+  Get a child by its String ID.
+  @param [String] id
+  ###
   childById: (id) ->
     @_childMap[id]
 
+  ### 
+  Get a descendant (child or deeper) by its String ID.
+  @param [String] id
+  ###
   descendantById: (id) ->
     child = @childById(id)
     if child
@@ -263,6 +341,9 @@ class Node
       if descendant
         return descendant
 
+  ### 
+  Get an Array of Node instances that have the same parent as this instance.
+  ###
   siblings: ->
     ownId = @nodeId()
 
@@ -271,12 +352,22 @@ class Node
 
     return []
 
+  ### 
+  Get a boolean stating if this Node instance is in the 'activated' state.
+  ###
   isActivated: ->
     @sm().currentState() == Node.States.ACTIVATED
 
+  ### 
+  Get a boolean stating if this Node instance is currently transitioning.
+  ###
   isTransitioning: ->
     @sm().isTransitioning()
 
+  ### 
+  Get a boolean stating if this Node instance or any of its children are transitioning. 
+  Note: Child transition status will only be included if mode == Node.Modes.Exclusive
+  ###
   isBusy: ->
     return true if @isTransitioning()
 
@@ -287,41 +378,85 @@ class Node
 
     return false
 
+  ### 
+  Get a boolean stating if any of the children of this node are transitioning.
+  ###
   haveBusyChildren: ->
     @children().filter((n) -> n.isBusy()).length > 0
 
+  ### 
+  Attempt to perform a transition to a new state.
+  @param [String] transition
+  ###
   attemptTransition: (t) ->
     @sm().attemptTransition t
 
+  ### 
+  Attempt to activate this Node instance.
+  ###
   activate: -> Node.activate @
+  
+  ### 
+  Attempt to deactivate this Node instance.
+  ###
   deactivate: -> Node.deactivate @
+
+  ### 
+  Attempt to toggle this Node instance.
+  ###
   toggle: -> Node.toggle @
 
-  # TODO
+  ### 
+  Attempt to deactivate all children of this Node instance.
+  ###
   deactivateChildren: ->
     for child in @children()
       child.deactivate()
 
+  ### 
+  Should be called when the activate transition is done. Can be overridden.
+  ###
   onActivated: ->
     @sm().onTransitionComplete()
     Node.onNodeActivated @
     @setOnActivatedAction null
 
+  ### 
+  Should be called when the deactivate transition is done. Can be overridden.
+  ###
   onDeactivated: ->
     @sm().onTransitionComplete()
     Node.onNodeDeactivated @
     @setOnDeactivatedAction null
 
-  # "Public functions"
-
+  ### 
+  Is called before doActivate. Can be overridden.
+  ###
   beforeActivate: ->
+
+  ### 
+  Called when the activate transition should begin. Can be overridden.
+  ###
   doActivate: -> @onActivated()
 
+  ### 
+  Is called before doDectivate. Can be overridden.
+  ###
   beforeDeactivate: ->
+
+  ### 
+  Called when the deactivate transition should begin. Can be overridden.
+  ###
   doDeactivate: -> @onDeactivated()
 
+  ### 
+  Called when a child Node of this instance has been activated.
+  ###
   onChildActivated: (child) ->
-
+  
+  ### 
+  Called when a child Node of this instance has been deactivated.
+  ###
   onChildDeactivated: (child) ->
 
 Exo.Node = Node
