@@ -1,7 +1,7 @@
 {
   "name": "exo",
   "description": "GUI State Management",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "jpettersson",
   "keywords": ["spine", "coffeescript", "GUI", "state management"],
   "contributors": ["jpettersson"],
