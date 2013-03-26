@@ -14,7 +14,7 @@ LIB_PACKAGES = [
     ] 
   },
   { 
-    output: 'lib/spine.exo.js' 
+    output: 'lib/exo.spine.js' 
     files: [
       'src/spine/controller.coffee'
       'src/spine/list.coffee'
