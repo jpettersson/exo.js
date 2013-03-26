@@ -63,7 +63,8 @@ deactivate            Attempt to deactivate the Node
 doDeactivate          Called by the state machine if the transition is possible.
                       Example: Called as the TweenLite onComplete callback.
 
-onDeactivated
+onDeactivated         Should be called when the transition is done.
+                      Example: Called as the TweenLite onComplete callback.
 ```
 
 By default the Node functions 'doActivate' and 'doDeactivated' are defined to immediately call their respective callbacks, enabling the state-machine to transition between states instantaneously.
@@ -73,7 +74,10 @@ What is more interesting is to override the default behavior and wait for a bloc
 ```CoffeeScript
 
 ###
-The transition begins when 'doActivate' is called and ends when 'onActivated' is called 500ms later, executed from the timeout.
+Example: Using a timeout to delay the transition.
+
+The transition begins when 'doActivate' is called and ends when 
+'onActivated' is called 500ms later, executed from the timeout.
 ###
 
 node = new Exo.Node
@@ -86,6 +90,26 @@ node.doActivate = ->
 node.onActivated = ->
   super
   console.log 'Activated!'
+
+node.activate()
+
+```
+
+Of course, it would make more sense to do something useful when transitioning, for instance running TweenLite animation:
+
+```CoffeeScript
+
+###
+Example: Playing a TweenLite animation when the 'activate' transition begins.
+###
+
+node = new Exo.Node
+
+node.doActivate = ->
+  TweenLite.from $('body'), ,5
+    css:
+      alpha: 0
+    onComplete: @onActivated
 
 node.activate()
 
