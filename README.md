@@ -115,6 +115,8 @@ node.activate()
 
 ```
 
+As outlined above, the internal state-machine will not allow multiple transitions at the same time and keeps strict control over which transition can be initiated at a given point in time. We can for instance leverage this behavior to ensure that a button-initiated animation is only started once, no matter how many times the user clicks the button.
+
 Control Hierarchies
 -------------------
 
