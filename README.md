@@ -76,6 +76,17 @@ Control Hierarchies
 * Control hierarchies
   - Explain Parent, Child, Sibling
 
+```
+            parent                                   child                 
+
+       --- activate -->>                --->>   --- activate -->>          
+     /                   \            /       /                   \        
+deactivated         [activated] -----    deactivated          activated    
+     \                   /                    \                   /        
+      <<- deactivate ---                       <<- deactivate ---          
+```
+
+
 Terminology
 -----------
 
