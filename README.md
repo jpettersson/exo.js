@@ -11,14 +11,14 @@ Exo handles the complex and tangled state management of heavily animated and rea
 * Sections
 * Lists
 
-Exo components can be used standalone but are also designed to integrate with controllers in MVC frameworks, such as Spine.js. 
+Exo components can be used standalone but are also designed to integrate with controllers in MVC frameworks, such as [Spine.js](http://spinejs.com/). 
 
 You can use Exo with any animation library (or use CSS transitions). Most of the examples in this documentation use the excellent [TweenLite](http://www.greensock.com/gsap-js/) library.
 
 Core principles
 ---------------
 
-Exo is based on the idea that it's possible to reduce complex GUI logic into arrangements of a fundamental building block.
+Exo is based on the idea that it's possible to reduce complex GUI logic into arrangements of a single fundamental building block.
 
 In Exo this building block is called a 'Node' and is a simple implementation of a [Finite state-machine](http://en.wikipedia.org/wiki/Finite-state_machine). 
 
@@ -28,30 +28,6 @@ A Node has two states:
 And two transitions: 
 'deactivate', 'activate'.
 
-A Node is not allowed to transition to and from the same state. Further, a node is not allowed to initiate a transition while another transition is still running. We can take advantage of these constraints by using the successful initiation of a state transition to control a corresponding animation.
-
-```CoffeeScript
-
-node = new Exo.Node
-
-node.doActivate = -> @onActivated()
-node.doDectivate = -> @onDeactivated()
-
-node.activate()
-node.deactivate()
-
-```
-
-
-
-State Transition Table
-```
-                  activate    deactivate
-activated         false       true
-deactivated       true        false
-```
-
-Graph representation
 ```
        --- activate -->>
      /                   \
@@ -60,18 +36,65 @@ deactivated          activated
       <<- deactivate ---
 ```
 
+A Node is not allowed to transition to and from the same state. Further, a node is not allowed to initiate a transition while another transition is still running. While a Node is executing a transition it is considered to be "busy".
 
+As the examples will demonstrate, we can take advantage of these constraints by using the successful initiation of a state transition to control a corresponding animation. After the animation is finished we invoke a callback on the node to finish the state transition, unlocking the state machine.
 
-* Transitional logic
-  - activate
-  - doActivate
-  - onActivated
-  - deactivate
-  - doDeactivate
-  - onDeactivated
+The Exo.Node class
+------------------
+
+The Node is defined as a CoffeeScript class and can be directly instantiated or inherited from.
+
+A node has 6 public instance methods that are related to it's internal state control: 
+
+```
+METHOD                Description
+
+activate              Attempt to activate the Node
+
+doActivate            Called by the state machine if the transition is possible.
+                      Example: Override to initiate a TweenLite animation.
+
+onActivated           Should be called when the transition is done.
+                      Example: Called as the TweenLite onComplete callback.
+
+deactivate            Attempt to deactivate the Node
+
+doDeactivate          Called by the state machine if the transition is possible.
+                      Example: Called as the TweenLite onComplete callback.
+
+onDeactivated
+```
+
+By default the Node functions 'doActivate' and 'doDeactivated' are defined to immediately call their respective callbacks, enabling the state-machine to transition between states instantaneously.
+
+What is more interesting is to override the default behavior and wait for a blocking process to finish, for instance a time delay: 
+
+```CoffeeScript
+
+###
+The transition begins when 'doActivate' is called and ends when 'onActivated' is called 500ms later, executed from the timeout.
+###
+
+node = new Exo.Node
+
+node.doActivate = -> 
+  setTimeout =>
+    @onActivated()
+  , .5
+
+node.onActivated = ->
+  super
+  console.log 'Activated!'
+
+node.activate()
+
+```
 
 Control Hierarchies
 -------------------
+
+Nodes can be arranged into tree-like hierarchies where state transitions depend on both 
 
 * Control hierarchies
   - Explain Parent, Child, Sibling
