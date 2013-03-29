@@ -1,0 +1,17 @@
+require 'json'
+
+version_path = "src/core/exo.coffee"
+
+read_version do
+  contents = File.read File.join(Dir.pwd, version_path)
+  version = contents[/'.*?'/].gsub(/[^0-9a-z .]/i, '')
+end
+
+write_version do |currentVersion, nextVersion|
+  contents = File.read File.join(Dir.pwd, version_path)
+  contents = contents.sub(currentVersion.to_s, nextVersion.to_s)
+
+  File.open(File.join(Dir.pwd, version_path), 'w') do |file| 
+    file.write contents
+  end
+end
