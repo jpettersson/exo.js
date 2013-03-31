@@ -1,5 +1,4 @@
-module.exports = 
-
+CSSTransitioner = 
   cssTransitionEndEvents: 'transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd'
   cssActiveClass: 'active'
   cssTransitionDelay: 10
@@ -21,3 +20,8 @@ module.exports =
     @delay =>
       @el[mutatorFunc].call @el, @cssActiveClass
     , @cssTransitionDelay
+
+Exo?.Spine ||= {}
+Exo?.Spine.Modules ||= {}
+Exo?.Spine.Modules.CSSTransitioner ||= CSSTransitioner
+module?.exports = CSSTransitioner
