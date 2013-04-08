@@ -7,16 +7,12 @@ DOMInflater =
     return unless typeof @['deactivateAndKillOrphans'] == 'function'
 
     classNames = []
+    if @modelClass
+      classNames = [@modelClass.className]
+    else if @modelClasses
+      classNames = @modelClasses.map (modelClass) -> modelClass.className
 
-    # Do we have modelClass -> template mappings?
-    if @templates
-      for key, val of @templates
-        classNames.push key
-
-    # Do we have modelClass -> controller mappings?
-    if @controllers
-      for key, val of @controllers
-        classNames.push key
+    throw "No Model Classes specified!" unless classNames.length > 0
 
     # 1. Select data-*-id
     # 2. Reject those not present in current model names
@@ -47,19 +43,36 @@ DOMInflater =
 
     if @template || @templates
       @tagElements(collection)
-    #else if @controller || @controllers
-    #  @createControllers(collection)
+    else if @controller || @controllers
+     @createControllers(collection)
 
   # Tag existing DOM elements that should be represented by 
   # rendered templates.
   tagElements: (collection)->
     for model in collection
       el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
-      $(el).data('item', model)
+      @tagElement el, model
 
   # Create controllers for existing DOM elements and add them 
   # to the Exo hierarchy, tag them with corresponding models.
   createControllers: (collection)->
+    throw 'No controllers specified!' unless @controller or @controllers
+    controllers = @controllers || {default: @controller}
+
+    for model in collection
+      controllerClass = controllers['default'] || controllers[model.constructor.className]
+      
+      el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
+      @tagElement el, model
+
+      child = new controllerClass
+        el: el
+        model: model
+        initialState: Exo.Node.States.ACTIVATED
+      @addChild child
+
+  tagElement: (el, model)->
+    $(el).data('item', model)
 
   inflateModel: (el, modelClassName)->
     if @modelClass
