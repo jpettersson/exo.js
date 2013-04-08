@@ -6,6 +6,8 @@ class Controller extends Spine.Controller
     @_nodeOpts = opts
     @_node = null
 
+    @filters = @.constructor.filters || {}
+
     # Delegate the Node transitions to this object.
     @node().beforeActivate = =>
       @trigger 'beforeActivate', @
@@ -36,7 +38,18 @@ class Controller extends Spine.Controller
     delete opts.children if opts.children
 
     super opts
-    @prepare()
+
+    @callWithFilters 'prepare'
+
+  callWithFilters: (methName, args...) ->
+    @callFilter("before_#{methName}")
+    @[methName].apply @, args
+    @callFilter("after_#{methName}")
+
+  callFilter: (methName)->
+    return unless @filters[methName]
+    for funcName in @filters[methName]
+      @[funcName].call @
 
   node: ->
     unless @_node
