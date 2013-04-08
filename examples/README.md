@@ -1,4 +1,4 @@
 Examples
 --------
 
-The examples can be run using catapult.
+The examples can be run using middleman.

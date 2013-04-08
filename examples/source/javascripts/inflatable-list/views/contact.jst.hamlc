@@ -1,0 +1,4 @@
+%li.item
+  %h1= @firstname
+  %h2= @laststname
+  %p= @phone
