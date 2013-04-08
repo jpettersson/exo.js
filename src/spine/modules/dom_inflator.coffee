@@ -1,4 +1,4 @@
-DOMInflater =
+DOMInflator =
 
   included: ->
     ((@filters ||= {})['before_prepare'] ||= []).push 'inflateFromDOM'
@@ -109,5 +109,5 @@ DOMInflater =
 
 Exo?.Spine ||= {}
 Exo?.Spine.Modules ||= {}
-Exo?.Spine.Modules.DOMInflater ||= DOMInflater
-module?.exports = DOMInflater
+Exo?.Spine.Modules.DOMInflator ||= DOMInflator
+module?.exports = DOMInflator

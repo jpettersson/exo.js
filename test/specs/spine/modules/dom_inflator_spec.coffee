@@ -1,8 +1,8 @@
-describe "Exo.Spine.Modules.DOMInflater", ->
+describe "Exo.Spine.Modules.DOMInflator", ->
 
   beforeEach ->
     class Dummy extends Exo.Spine.Controller
-      @include Exo.Spine.Modules.DOMInflater
+      @include Exo.Spine.Modules.DOMInflator
 
     @controllerClass = Dummy
 
@@ -51,7 +51,7 @@ describe "Exo.Spine.Modules.DOMInflater", ->
 
   it 'should inflate models from dom and tag templates in a list', ->
     class DummyList extends Exo.Spine.List
-      @include Exo.Spine.Modules.DOMInflater
+      @include Exo.Spine.Modules.DOMInflator
 
     postTemplate = (model)-> 
       "<div data-post-id=\"#{model.id}\">
@@ -135,7 +135,7 @@ describe "Exo.Spine.Modules.DOMInflater", ->
 
   it 'should inflate models from dom and create controllers in a list', ->
     class DummyList extends Exo.Spine.List
-      @include Exo.Spine.Modules.DOMInflater
+      @include Exo.Spine.Modules.DOMInflator
 
     postTemplate = (model)-> 
       "<div data-post-id=\"#{model.id}\">
