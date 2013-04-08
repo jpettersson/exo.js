@@ -11,6 +11,11 @@ describe "Exo.Spine.Modules.DOMInflater", ->
 
     @postClass = Post
 
+    class PostApocalypse extends Spine.Model
+      @configure 'PostApocalypse', 'title', 'date', 'content', 'note'
+
+    @postApocalypseClass = PostApocalypse
+
     @el = "
       <div data-post-id=\"64\">
         <h1 data-post-attribute=\"title\">Awesome title</h1>
@@ -32,9 +37,10 @@ describe "Exo.Spine.Modules.DOMInflater", ->
 
   it 'should inflate a valid model from DOM', ->
     @controller = new @controllerClass
+      modelClass: @postClass
       el: @el
 
-    model = @controller.inflateModel(@controller.el, @postClass)
+    model = @controller.inflateModel(@controller.el, 'Post')
 
     expect(model.id).to.equal '64'
     expect(model.title).to.equal 'Awesome title'
@@ -45,6 +51,22 @@ describe "Exo.Spine.Modules.DOMInflater", ->
   it 'should inflate models from dom and create controllers in a list', ->
     class DummyList extends Exo.Spine.List
       @include Exo.Spine.Modules.DOMInflater
+
+    postTemplate = (model)-> 
+      "<div data-post-id=\"#{model.id}\">
+          <h1 data-post-attribute=\"title\">#{model.title}</h1>
+          <h2 data-post-attribute=\"date\">#{model.date}</h2>
+          <p data-post-attribute=\"content\">#{model.content}</p>
+          <p><span data-post-attribute=\"note\">#{model.note}</span></p>
+        </div>"
+
+    postApocalypseTemplate = (model)-> 
+      "<div data-post-apocalypse-id=\"#{model.id}\">
+          <h1 data-post-apocalypse-attribute=\"title\">#{model.title}</h1>
+          <h2 data-post-apocalypse-attribute=\"date\">#{model.date}</h2>
+          <p data-post-apocalypse-attribute=\"content\">#{model.content}</p>
+          <p><span data-apocalypse-post-attribute=\"note\">#{model.note}</span></p>
+        </div>"
 
     el = "
       <div>
@@ -60,11 +82,21 @@ describe "Exo.Spine.Modules.DOMInflater", ->
           <p data-post-attribute=\"content\">Interesting text2</p>
           <p><span data-post-attribute=\"note\">some note2</span></p>
         </div>
+        <div class=\"apocalypse\" data-post-apocalypse-id=\"80\">
+          <h1 data-post-apocalypse-attribute=\"title\">Apocalypse!</h1>
+          <h2 data-post-apocalypse-attribute=\"date\">20XX-XX-XX</h2>
+          <p data-post-apocalypse-attribute=\"content\">Interesting text3</p>
+          <p><span data-post-apocalypse-attribute=\"note\">some note3</span></p>
+        </div>
       </div>
     "
 
     controller = new DummyList
-      modelClass: @postClass
-      el: $(el)
+      modelClasses: [@postClass, @postApocalypseClass]
 
+      templates: 
+        Post: postTemplate
+        PostApocalypse: postApocalypseTemplate
+
+      el: $(el)
 

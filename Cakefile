@@ -39,8 +39,8 @@ SPEC_PACKAGES = [
       'test/specs/spine/controller_spec.coffee'
       'test/specs/spine/list_spec.coffee'
       'test/specs/spine/model_spec.coffee'
-      'test/specs/spine/modules/css_transitioner_spec'
-      'test/specs/spine/modules/dom_inflater_spec'
+      'test/specs/spine/modules/css_transitioner_spec.coffee'
+      'test/specs/spine/modules/dom_inflater_spec.coffee'
     ]
   }
 ]
