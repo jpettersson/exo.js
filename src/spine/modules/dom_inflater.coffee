@@ -43,7 +43,7 @@ DOMInflater =
       throw "Invalid DOM" unless id
       @inflateModel $(el), className
 
-    console.log 'collection', collection
+    #console.log 'collection', collection
 
     if @template || @templates
       @tagElements(collection)
@@ -54,7 +54,8 @@ DOMInflater =
   # rendered templates.
   tagElements: (collection)->
     for model in collection
-      
+      el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
+      $(el).data('item', model)
 
   # Create controllers for existing DOM elements and add them 
   # to the Exo hierarchy, tag them with corresponding models.

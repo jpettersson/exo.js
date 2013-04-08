@@ -100,3 +100,7 @@ describe "Exo.Spine.Modules.DOMInflater", ->
 
       el: $(el)
 
+    #console.log $(controller.el).children(['data-item'])
+    len = controller.el.children(['data-item']).length
+    expect(len).to.equal 3
+
