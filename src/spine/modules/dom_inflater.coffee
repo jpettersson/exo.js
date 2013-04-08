@@ -14,11 +14,8 @@ DOMInflater =
 
     throw "No Model Classes specified!" unless classNames.length > 0
 
-    # 1. Select data-*-id
-    # 2. Reject those not present in current model names
-    # 3. Map them to model instances
-
-    dashifiedClassNames = classNames.map (className)=> @dashify(className)
+    dashifiedClassNames = classNames.map (className)=> 
+      @dashify(className)
 
     selectors = dashifiedClassNames.map (className)->
       "[data-#{className}-id]"
@@ -39,22 +36,24 @@ DOMInflater =
       throw "Invalid DOM" unless id
       @inflateModel $(el), className
 
-    #console.log 'collection', collection
-
     if @template || @templates
       @tagElements(collection)
     else if @controller || @controllers
      @createControllers(collection)
-
-  # Tag existing DOM elements that should be represented by 
-  # rendered templates.
+  
+  ###
+  Tag existing DOM elements that should be represented by 
+  rendered templates.
+  ###
   tagElements: (collection)->
     for model in collection
       el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
       @tagElement el, model
 
-  # Create controllers for existing DOM elements and add them 
-  # to the Exo hierarchy, tag them with corresponding models.
+  ###
+  Create controllers for existing DOM elements and add them 
+  to the Exo hierarchy, tag them with corresponding models.
+  ###
   createControllers: (collection)->
     throw 'No controllers specified!' unless @controller or @controllers
     controllers = @controllers || {default: @controller}
@@ -94,6 +93,11 @@ DOMInflater =
 
     new modelClass(attributes)
 
+  ###
+  Take a CamelCase model class-name and return
+  a dashified version: camel-case.
+  @param [String] string
+  ###
   dashify: (name) ->
     first = true
     name.replace /[A-Z]/g, (match) ->
