@@ -20,6 +20,7 @@ LIB_PACKAGES = [
       'src/spine/list.coffee'
       'src/spine/model.coffee'
       'src/spine/modules/css_transitioner.coffee'
+      'src/spine/modules/dom_inflator.coffee'
     ]
   }
 ]
@@ -38,7 +39,8 @@ SPEC_PACKAGES = [
       'test/specs/spine/controller_spec.coffee'
       'test/specs/spine/list_spec.coffee'
       'test/specs/spine/model_spec.coffee'
-      'test/specs/spine/modules/css_transitioner_spec'
+      'test/specs/spine/modules/css_transitioner_spec.coffee'
+      'test/specs/spine/modules/dom_inflator_spec.coffee'
     ]
   }
 ]
