@@ -91,7 +91,11 @@ DOMInflator =
       if targetEl = el.find("[data-#{className}-attribute='#{attr}']")[0]
         attributes[attr] = targetEl.innerText
 
-    new modelClass(attributes)
+    model = new modelClass(attributes)
+    # Insert the new model into the Spine.Model Collection
+    model.constructor.records[model.id] = model
+
+    return model
 
   ###
   Take a CamelCase model class-name and return
