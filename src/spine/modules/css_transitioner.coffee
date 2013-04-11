@@ -1,24 +1,32 @@
 CSSTransitioner = 
   cssTransitionEndEvents: 'transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd'
-  cssActiveClass: 'active'
+  cssActivateClass: 'active'
+  cssDeactivateClass: undefined
   cssTransitionDelay: 10
 
   doActivate: ->
-    @cssStartTransition('addClass', @onActivated)
+    if @cssDeactivateClass
+      @el.removeClass @cssDeactivateClass
+
+    @cssStartTransition('addClass', @cssActivateClass, @onActivated)
 
   doDeactivate: ->
-    @cssStartTransition('removeClass', @onDeactivated)
+    if @cssDeactivateClass
+      @cssStartTransition('addClass', @cssDeactivateClass, @onDeactivated)
+    else
+      @cssStartTransition('removeClass', @cssActivateClass, @onDeactivated)
   
-  cssListen: (callback)->
-    @el.on @cssTransitionEndEvents, =>
+  cssListen: (callback, className)->
+    $(@el).bind @cssTransitionEndEvents, =>
       callback.call @
       @el.off @cssTransitionEndEvents
+      #@el.removeClass className
 
-  cssStartTransition: (mutatorFunc, callback)->
-    @cssListen(callback)
+  cssStartTransition: (mutatorFunc, className, callback)->
+    @cssListen(callback, className)
 
     @delay =>
-      @el[mutatorFunc].call @el, @cssActiveClass
+      @el[mutatorFunc].call @el, className
     , @cssTransitionDelay
 
 Exo?.Spine ||= {}
