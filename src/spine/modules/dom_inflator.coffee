@@ -4,7 +4,6 @@ DOMInflator =
     ((@filters ||= {})['before_prepare'] ||= []).push 'inflateFromDOM'
 
   inflateFromDOM: ->
-    console.log 'inflateFromDOM!'
     return unless typeof @['deactivateAndKillOrphans'] == 'function'
 
     classNames = []
