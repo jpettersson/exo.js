@@ -40,11 +40,11 @@ class List extends Exo.Spine.Controller
 		@trigger 'afterRender', @
 
 	getOrCreateChild: (item, controller, opts) ->
-		child = @childById(item.constructor.className + item.id)
+		child = @childById(item.constructor.className + item.cid)
 		unless child
 			child = new controller(opts)
 			@addChild child
-			child.setNodeId(item.constructor.className + item.id)
+			child.setNodeId(item.constructor.className + item.cid)
 			child.prepareWithModel item
 			@append child
 			$(child.el).data('item', item)
@@ -53,7 +53,7 @@ class List extends Exo.Spine.Controller
 
 	# Find children that have been deleted from the collection. Deactivate them, remove them from the DOM and make them available for GC.
 	deactivateAndKillOrphans: (children, collection) ->
-		orphans = children.filter (child) -> child.nodeId() not in collection.map (item) -> item.constructor.className + item.id
+		orphans = children.filter (child) -> child.nodeId() not in collection.map (item) -> item.constructor.className + item.cid
 		for orphan in orphans
 			if orphan.isActivated() and not orphan.isBusy()
 				orphan.bind 'onDeactivated', (controller) =>
