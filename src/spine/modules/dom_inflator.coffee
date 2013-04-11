@@ -4,6 +4,7 @@ DOMInflator =
     ((@filters ||= {})['before_prepare'] ||= []).push 'inflateFromDOM'
 
   inflateFromDOM: ->
+    console.log 'inflateFromDOM!'
     return unless typeof @['deactivateAndKillOrphans'] == 'function'
 
     classNames = []
@@ -89,7 +90,7 @@ DOMInflator =
     attributes = {id: id}
     for attr in modelClass.attributes
       if targetEl = el.find("[data-#{className}-attribute='#{attr}']")[0]
-        attributes[attr] = targetEl.innerText
+        attributes[attr] = $(targetEl).text()
 
     model = new modelClass(attributes)
     # Insert the new model into the Spine.Model Collection
