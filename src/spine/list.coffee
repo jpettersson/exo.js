@@ -18,8 +18,13 @@ class List extends Exo.Spine.Controller
     else if @controller || @controllers
       @renderControllers collection, opts
 
+  ###
+  Erase the current DOM children and render 
+  all items in the collection.
+  ###
   renderTemplates: (collection) ->
     templates = @templates || {default: @template}
+    @html ''
     for item in collection 
       html = (templates.default or templates[item.constructor.className]).call(@, item)
       el = $(html).appendTo(@el)
