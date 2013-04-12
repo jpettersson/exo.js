@@ -204,6 +204,12 @@ describe "Exo.Spine.Modules.DOMInflator", ->
     expect(len).to.equal 3
 
     expect(controller.children().length).to.equal 3
+    expect(controller.children()[0].model.title).to.equal 'Awesome title'
+    expect(controller.children()[1].model.title).to.equal 'Awesome title2'
+    expect(controller.children()[2].model.title).to.equal 'Apocalypse!'
+
+    # Make sure each item has it's own EL
+    expect(controller.children()[0].el.length).to.equal 1
 
     # Using a single Model -> Controller mapping
     el = "

@@ -47,8 +47,7 @@ DOMInflator =
   ###
   tagElements: (collection)->
     for model in collection
-      el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
-      @tagElement el, model
+      @findAndTagElement model
 
   ###
   Create controllers for existing DOM elements and add them 
@@ -61,8 +60,7 @@ DOMInflator =
     for model in collection
       controllerClass = controllers['default'] || controllers[model.constructor.className]
       
-      el = @el.find("[data-#{@dashify(model.constructor.className)}-id]")
-      @tagElement el, model
+      el = @findAndTagElement model
 
       child = new controllerClass
         el: el
@@ -70,8 +68,10 @@ DOMInflator =
         initialState: Exo.Node.States.ACTIVATED
       @addChild child
 
-  tagElement: (el, model)->
+  findAndTagElement: (model)->
+    el = @el.find("[data-#{@dashify(model.constructor.className)}-id=#{model.id}]")
     $(el).data('item', model)
+    return el
 
   inflateModel: (el, modelClassName)->
     if @modelClass
