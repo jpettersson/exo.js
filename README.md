@@ -1,6 +1,8 @@
 exo.js
 ======
 
+This project is abanoned and will not receive any further updates. I've switched to angular.js and find that angular + angular-animate covers my use cases so far.
+
 Introduction
 ------------
 
